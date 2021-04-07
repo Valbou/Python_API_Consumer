@@ -10,7 +10,7 @@ class User:
 
 user = User(url="https://example.org/api", token="")
 
-# GET https://example.org/api/user/5?token=token&format=json and hydrate instance
+# GET https://example.org/api/user/5?token=&format=json and hydrate instance
 user.from_db(id=5)
 
 # Give you the first name of this user id 5
@@ -24,7 +24,7 @@ class PublicQuestion:
 question = PublicQuestion(*user.args_api)
 limit = 10
 
-# GET https://example.org/api/question/?limit=10&token=token&format=json and create 10 hydrated instances
+# GET https://example.org/api/question/?limit=10&token=&format=json and create 10 hydrated instances
 top_questions = question.from_query(
   options=['limit={}'.format(limit)],
   limit=limit,
