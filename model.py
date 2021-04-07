@@ -151,7 +151,7 @@ class Model(Api):
             raise Exception('Convert id to instance (attribute {}) impossible in {}'.format(attribute, self.item))
 
     def object_to_id(self, attribute:str):
-        """ Décomposition à partir des objets """
+        """ Decomposition from instance """
         instance = getattr(self, attribute)
         if isinstance(instance, Model):
             self.__setattr__(attribute, instance.id)
