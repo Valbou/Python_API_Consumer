@@ -21,20 +21,20 @@ print(user.first_name)
 
 ### GET List
 ```py
-class PublicQuestion(Model):
-  item = "question"
+class Foo(Model):
+  item = "bar"
 
-question = PublicQuestion(*user.args_api)
+foo = Foo(*user.args_api)
 limit = 10
 
-# GET https://example.org/api/question/?limit=10&token=&format=json and create 10 hydrated instances
-top_questions = question.from_query(
+# GET https://example.org/api/bar/?limit=10&token=&format=json and create 10 hydrated instances of Foo from api/bar/
+many_foo = foo.from_query(
   options=['limit={}'.format(limit)],
   limit=limit,
-  classe=PublicQuestion
+  classe=Foo
   )
 # The use of limit=limit parameter is used to add instances beyond the DRF page_size configuration.
-# top_question is a list of 10 instances of PublicQuestion class
+# many_foo is a list of 10 instances of Foo class
 ```
 
 ### PUT/PATCH update
@@ -45,7 +45,7 @@ user.save()
 
 ### POST Create
 ```py
-account = User(*question.args_api)
+account = User(*foo.args_api)
 account.fisrt_name = "Bob"
 account.email = "bob@example.org"
 account.save()
