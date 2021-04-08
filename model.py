@@ -1,4 +1,4 @@
-import inspect
+from inspect import ismethod, getmembers
 
 from api import Api
 
@@ -14,14 +14,14 @@ class Model(Api):
             raise Exception("Item undefined in model {}".format(self.__class__))
 
     def _is_public_attribute(self, member):
-        return not inspect.ismethod(member[1]) and not isinstance(member[1], Model) and member[0][0] != "_"
+        return not ismethod(member[1]) and not isinstance(member[1], Model) and member[0][0] != "_"
 
     def _is_object(self, member):
         return isinstance(member[1], Model)
 
     def _build_dictionary(self):
         dictionary = {}
-        for member in inspect.getmembers(self):
+        for member in getmembers(self):
             if self._is_public_attribute(member):
                 dictionary[member[0]] = member[1]
             elif self._is_object(member):
