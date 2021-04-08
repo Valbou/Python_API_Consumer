@@ -3,9 +3,9 @@ Django REST Framework API Consumer
 
 This basic API consumer was originally created to easily consume a Django REST Framework API from a PyQT application on a Raspberry Pi.
 
-To use it :
+## Get started:
 
-# GET Retrieve
+### GET Retrieve
 ```py
 class User(Model):
   pass
@@ -19,7 +19,7 @@ user.from_db(id=5)
 print(user.first_name)
 ```
 
-# GET List
+### GET List
 ```py
 class PublicQuestion(Model):
   item = "question"
@@ -37,13 +37,13 @@ top_questions = question.from_query(
 # top_question is a list of 10 instances of PublicQuestion class
 ```
 
-# PUT/PATCH update
+### PUT/PATCH update
 ```py
 user.fisrt_name = "Alice"
 user.save()
 ```
 
-# POST Create
+### POST Create
 ```py
 account = User(*question.args_api)
 account.fisrt_name = "Bob"
@@ -51,7 +51,7 @@ account.email = "bob@example.org"
 account.save()
 ```
 
-# DELETE Destroy
+### DELETE Destroy
 ```py
 account.delete()
 ```
