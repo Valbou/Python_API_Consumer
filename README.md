@@ -7,7 +7,7 @@ To use it :
 
 # GET Retrieve
 ```py
-class User:
+class User(Model):
   pass
 
 user = User(url="https://example.org/api", token="")
@@ -21,7 +21,7 @@ print(user.first_name)
 
 # GET List
 ```py
-class PublicQuestion:
+class PublicQuestion(Model):
   item = "question"
 
 question = PublicQuestion(*user.args_api)
