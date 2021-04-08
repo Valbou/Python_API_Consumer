@@ -3,6 +3,12 @@ Django REST Framework API Consumer
 
 This basic API consumer was originally created to easily consume a Django REST Framework API from a PyQT application on a Raspberry Pi.
 
+## Dependencies
+* asyncio
+* requests
+* functools
+* inspect
+
 ## Get started:
 
 ### GET Retrieve
