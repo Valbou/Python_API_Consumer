@@ -37,7 +37,7 @@ limit = 10
 many_foo = foo.from_query(
   options=['limit={}'.format(limit)],
   limit=limit,
-  classe=Foo
+  model_class=Foo
   )
 # The use of limit=limit parameter is used to add instances beyond the DRF page_size configuration.
 # many_foo is a list of 10 instances of Foo class
