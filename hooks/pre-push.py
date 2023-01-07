@@ -148,7 +148,7 @@ if __name__ == "__main__":
     to_run = [
         ("Isort", isort_commands),
         ("Black", black_commands),
-        # ("Flake8", flake_commands),
+        ("Flake8", flake_commands),
         ("Bandit", bandit_commands),
         ("Unittest", unittest_commands, "api_consumer"),
         ("Coverage", unittest_commands, "api_consumer"),
