@@ -167,6 +167,7 @@ class Api:
 
     def _gen_url(self, item, id_instance="", options=[]):
         """To construct URL"""
+        # TODO: permit to add an URL formatter object to get more flexibility
         return "{}{}/{}/{}?format={}{}".format(
             ("https://" if self.secure else "http://"),
             self.url,
