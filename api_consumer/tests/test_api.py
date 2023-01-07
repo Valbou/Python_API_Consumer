@@ -1,9 +1,10 @@
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from requests import Response
 
 from api_consumer.api import Api
+from api_consumer.exceptions import ApiConsumerException
 
 
 class TestApi(TestCase):
@@ -50,3 +51,17 @@ class TestApi(TestCase):
             result = api.get_instance("item", 1)
             self.assertTrue(mock.called)
             self.assertDictEqual(result, {"test": "ok"})
+
+    def test_error_get_instance(self):
+        api = Api()
+        api.config("http://test.com", secure=False)
+        with patch("requests.get") as mock:
+            r = Response()
+            r.status_code = 404
+            r.request = MagicMock()
+            r.request.method = "get"
+            mock.return_value = r
+
+            with self.assertRaises(ApiConsumerException):
+                api.get_instance("item", 1)
+            self.assertTrue(mock.called)
