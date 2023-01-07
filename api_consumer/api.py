@@ -6,15 +6,29 @@ from .exceptions import ApiConsumerException
 
 
 class Api:
-    """ Base class to consume Django REST Framework APIs """
-    token = ''
-    url = ''
-    output = 'json'
-    prev = None
-    next = None
-    headers = {'user-agent': 'Vb API', 'content-type': 'application/json; charset=utf8'}
+    """
+    Base class to consume Django REST Framework APIs
 
-    def config(self, url, token='', secure=True, output='json', verbose=False):
+    token: Auth token to use for api calls
+    url: Endpoint URL
+    output: expected output format
+    prev: URL to previous page
+    next: URL to next page
+    headers: headers for requests calls
+    """
+
+    token: str = ""
+    url: str = ""
+    output: str = "json"
+    prev: str = ""
+    next: str = ""
+    headers: dict = {
+        "user-agent": "Vb API Consumer",
+        "content-type": "application/json; charset=utf8",
+    }
+
+    def config(self, url: str, token="", secure=True, output="json", verbose=False):
+        """Permit to change config on the fly if needed"""
         self.url = url
         self.secure = secure
         self.token = token
@@ -26,38 +40,40 @@ class Api:
         return await loop.run_in_executor(None, partial(funct, **kargs))
 
     def get_list(self, item, options=[], page=None):
+        """To collect a list of items"""
         # DRF pagination management
         if page == "next" and self.next:
             url = self.next
         elif page == "prev" and self.prev:
             url = self.prev
         elif page is None:
-            self.prev = None
-            self.next = None
+            self.prev = ""
+            self.next = ""
             url = self._gen_url(item, options=options)
         else:
             return False
 
-        r = asyncio.run(self.async_req(
-            funct=requests.get, 
-            url=url, 
-            headers=self.headers
-        ))
+        r = asyncio.run(
+            self.async_req(funct=requests.get, url=url, headers=self.headers)
+        )
 
         if r.status_code == 200:
             datas = r.json()
-            self.prev = datas['previous']
-            self.next = datas['next']
-            return datas['results']
+            self.prev = datas["previous"]
+            self.next = datas["next"]
+            return datas["results"]
         else:
             self.debug(item, r)
         return False
 
-    def get_inst(self, item, id_instance, options=[]):
-        r = asyncio.run(self.async_req(
-            funct=requests.get, 
-            url=self._gen_url(item, id_instance=id_instance, options=options), 
-            headers=self.headers)
+    def get_instance(self, item, id_instance, options=[]):
+        """To collect an unique item"""
+        r = asyncio.run(
+            self.async_req(
+                funct=requests.get,
+                url=self._gen_url(item, id_instance=id_instance, options=options),
+                headers=self.headers,
+            )
         )
         if r.status_code == 200:
             return r.json()
@@ -65,63 +81,78 @@ class Api:
             self.debug(item, r)
         return False
 
-    def post_inst(self, item, payload={}, options=[]):
-        r = asyncio.run(self.async_req(
-            funct=requests.post,
-            url=self._gen_url(item, options=options),
-            headers=self.headers,
-            json=payload,
-        ))
+    def post_instance(self, item, payload={}, options=[]):
+        """To save a new item"""
+        r = asyncio.run(
+            self.async_req(
+                funct=requests.post,
+                url=self._gen_url(item, options=options),
+                headers=self.headers,
+                json=payload,
+            )
+        )
         if r.status_code != 201:
             self.debug(item, r)
             return False
         return r.json()
 
-    def put_inst(self, item, payload={}, options=[]):
-        id_instance = payload.get('id', None)
+    def put_instance(self, item, payload={}, options=[]):
+        """To update a complete item"""
+        id_instance = payload.get("id", None)
         if id_instance:
-            r = asyncio.run(self.async_req(
-                funct=requests.put,
-                url=self._gen_url(item, id_instance=id_instance, options=options),
-                headers=self.headers,
-                json=payload
-            ))
+            r = asyncio.run(
+                self.async_req(
+                    funct=requests.put,
+                    url=self._gen_url(item, id_instance=id_instance, options=options),
+                    headers=self.headers,
+                    json=payload,
+                )
+            )
             if r.status_code != 200:
                 self.debug(item, r)
             return r.json()
         return False
 
-    def patch_inst(self, item, payload={}, options=[]):
-        id_instance = payload.get('id', None)
+    def patch_instance(self, item, payload={}, options=[]):
+        """To update partially an item"""
+        id_instance = payload.get("id", None)
         if id_instance:
-            r = asyncio.run(self.async_req(
-                funct=requests.patch,
-                url=self._gen_url(item, id_instance=id_instance, options=options),
-                headers=self.headers,
-                json=payload
-            ))
+            r = asyncio.run(
+                self.async_req(
+                    funct=requests.patch,
+                    url=self._gen_url(item, id_instance=id_instance, options=options),
+                    headers=self.headers,
+                    json=payload,
+                )
+            )
             if r.status_code != 200:
                 self.debug(item, r)
             return r.json()
         return False
 
-    def delete_inst(self, item, payload={}, options=[]):
-        id_instance = payload.get('id', None)
-        r = asyncio.run(self.async_req(
-            funct=requests.delete,
-            url=self._gen_url(item, id_instance=id_instance, options=options),
-            headers=self.headers,
-            data=payload
-        ))
+    def delete_instance(self, item, payload={}, options=[]):
+        """To delete an item"""
+        id_instance = payload.get("id", None)
+        r = asyncio.run(
+            self.async_req(
+                funct=requests.delete,
+                url=self._gen_url(item, id_instance=id_instance, options=options),
+                headers=self.headers,
+                data=payload,
+            )
+        )
         if r.status_code != 204:
             self.debug(item, r)
             return False
         return True
 
     def debug(self, item, r):
-        complement = ''
+        """Helper for debug purposes"""
+        complement = ""
         if self.verbose:
-            complement = "\nErr {} {}\n{}\n##########\n{}\n##########".format(r.request.method, r.status_code, r.url, r.content)
+            complement = "\nErr {} {}\n{}\n##########\n{}\n##########".format(
+                r.request.method, r.status_code, r.url, r.content
+            )
         else:
             complement = " - Err {} {}".format(r.request.method, r.status_code)
         err = "API error ({}){}".format(item, complement)
@@ -130,9 +161,18 @@ class Api:
     def __str__(self):
         return "{} {}".format(self.url, self.token)
 
-    def _gen_url(self, item, id_instance='', options=[]):
-        return '{}{}/{}/{}?token={}&format={}{}'.format(('https://' if self.secure else 'http://'), self.url, item, id_instance, self.token, self.output, self._options(options))
+    def _gen_url(self, item, id_instance="", options=[]):
+        """To construct URL"""
+        return "{}{}/{}/{}?token={}&format={}{}".format(
+            ("https://" if self.secure else "http://"),
+            self.url,
+            item,
+            id_instance,
+            self.token,
+            self.output,
+            self._options(options),
+        )
 
     def _options(self, options):
+        """Permit to add options on call"""
         return ("&" + "&".join(options)) if len(options) else ""
-
