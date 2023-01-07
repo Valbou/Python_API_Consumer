@@ -15,7 +15,10 @@ class TestApi(TestCase):
         self.assertEqual(api.next, "")
         self.assertDictEqual(
             api.headers,
-            {"user-agent": "Vb API Consumer", "content-type": "application/json; charset=utf8"}
+            {
+                "user-agent": "Vb API Consumer",
+                "content-type": "application/json; charset=utf8",
+            },
         )
 
     def test_config(self):
@@ -30,7 +33,10 @@ class TestApi(TestCase):
         self.assertEqual(api.next, "")
         self.assertDictEqual(
             api.headers,
-            {"user-agent": "Vb API Consumer", "content-type": "application/json; charset=utf8"}
+            {
+                "user-agent": "Vb API Consumer",
+                "content-type": "application/json; charset=utf8",
+            },
         )
 
     def test_get_instance(self):
@@ -42,6 +48,6 @@ class TestApi(TestCase):
             r.json = lambda: {"test": "ok"}
             mock.return_value = r
 
-            result = api.get_instance('item', 1)
+            result = api.get_instance("item", 1)
             self.assertTrue(mock.called)
             self.assertDictEqual(result, {"test": "ok"})
