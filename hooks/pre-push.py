@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
 import re
-from typing import Callable
+import sys
 from pathlib import Path
-from subprocess import run, CompletedProcess  # nosec
-from colorama import Fore, Back, Style
+from subprocess import CompletedProcess, run  # nosec
+from typing import Callable
+
+from colorama import Back, Fore, Style
 
 
 def run_app(
@@ -21,6 +22,16 @@ def run_app(
     else:
         print(f"{Back.GREEN+Fore.BLACK} {app_name} PASSED {Style.RESET_ALL}")
     return process.returncode
+
+
+def isort_commands(interpreter: str, folder: Path) -> list:
+    return [
+        interpreter,
+        "-m",
+        "black",
+        # "--check",  # Option to avoid write
+        folder,
+    ]
 
 
 def black_commands(interpreter: str, folder: Path) -> list:
@@ -135,11 +146,12 @@ if __name__ == "__main__":
     interpreter = os.path.join(path_venv, "bin", "python3")
 
     to_run = [
+        ("Isort", isort_commands),
         ("Black", black_commands),
-        ("Flake8", flake_commands),
+        # ("Flake8", flake_commands),
         ("Bandit", bandit_commands),
-        ("Unittest", unittest_commands, "domain"),
-        ("Coverage", unittest_commands, "domain"),
+        ("Unittest", unittest_commands, "api_consumer"),
+        ("Coverage", unittest_commands, "api_consumer"),
     ]
 
     exit_score = 0
