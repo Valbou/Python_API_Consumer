@@ -160,8 +160,8 @@ if __name__ == "__main__":
     for app in to_run:
         exit_score += run_app(interpreter, path_project, *app)
 
-    exit_score += check_requirements(interpreter)
     exit_score += check_coverage_report(interpreter)
+    exit_score += check_requirements(interpreter)
     # exit_score += check_git_branch_name()
 
     if exit_score > 0:
