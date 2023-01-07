@@ -1,6 +1,7 @@
 from inspect import ismethod, getmembers
 
-from api import Api
+from .api import Api
+from .exceptions import ModelConsumerException
 
 
 class Model(Api):
@@ -11,7 +12,7 @@ class Model(Api):
         self.__class__.item = self.__class__.__name__.lower()
         self.config(url, token, secure, verbose=verbose)
         if not self.item:
-            raise Exception("Item undefined in model {}".format(self.__class__))
+            raise ModelConsumerException("Item undefined in model {}".format(self.__class__))
 
     def _is_public_attribute(self, member):
         return not ismethod(member[1]) and not isinstance(member[1], Model) and member[0][0] != "_"
@@ -47,13 +48,13 @@ class Model(Api):
     def from_db(self, id_instance:int=0):
         """ READ - Load the instance from the API """
         if not id_instance and not self.id:
-            raise Exception('ID required for item {}'.format(self.item))
+            raise ModelConsumerException('ID required for item {}'.format(self.item))
         elif not id_instance:
             id_instance = self.id
 
         datas = self.get_inst(self.item, id_instance)
         if not datas:
-            raise Exception('Error retriving item {}({}) from API'.format(self.item, id_instance))
+            raise ModelConsumerException('Error retriving item {}({}) from API'.format(self.item, id_instance))
         return self.from_json(datas)
 
     def from_query(self, options=[], limit=0, model_class=None):
@@ -66,7 +67,7 @@ class Model(Api):
             item = self.item
 
         if not item:
-            raise Exception("### Error", model_class.__name__, "no item defined ->", item)
+            raise ModelConsumerException("### Error", model_class.__name__, "no item defined ->", item)
 
         items = []
         if limit:
@@ -102,7 +103,7 @@ class Model(Api):
     def factory(self, model_class, dictionary:dict):
         """ Return a new instance of the same type with attributes in dictionary """
         if not issubclass(model_class, Model):
-            raise Exception('The class supplied to the factory must be a Model type class (inheritance) and not a {}'.format(type(model_class)))
+            raise ModelConsumerException('The class supplied to the factory must be a Model type class (inheritance) and not a {}'.format(type(model_class)))
 
         instance = model_class(*self.args_api) if model_class else self.__class__(*self.args_api)
         instance.from_json(dictionary)
@@ -115,7 +116,7 @@ class Model(Api):
         ex: class = Model
         """
         if not issubclass(model_class, Model):
-            raise Exception('The class supplied to the factory must be a Model type class (inheritance) and not a {}'.format(type(model_class)))
+            raise ModelConsumerException('The class supplied to the factory must be a Model type class (inheritance) and not a {}'.format(type(model_class)))
 
         l = []
         for e in dict_list:
@@ -148,7 +149,7 @@ class Model(Api):
         if isinstance(id, int) and isinstance(instance, Model):
             self.__setattr__(attribute, instance.from_db(id))
         else:
-            raise Exception('Convert id to instance (attribute {}) impossible in {}'.format(attribute, self.item))
+            raise ModelConsumerException('Convert id to instance (attribute {}) impossible in {}'.format(attribute, self.item))
 
     def object_to_id(self, attribute:str):
         """ Decomposition from instance """
@@ -156,7 +157,7 @@ class Model(Api):
         if isinstance(instance, Model):
             self.__setattr__(attribute, instance.id)
         else:
-            raise Exception('Convert id to instance (attribute {}) impossible in {}'.format(attribute, self.item))
+            raise ModelConsumerException('Convert id to instance (attribute {}) impossible in {}'.format(attribute, self.item))
 
     def log(self):
         import json
@@ -166,6 +167,6 @@ class Model(Api):
             fichier = "logs/{}-{}.log".format(date.today(), self.item)
             with open(fichier, 'a+') as f:
                 f.write(json.dumps(self._build_dictionary()))
-        except Exception as e:
+        except ModelConsumerException as e:
             print("Model.log Exception :", e)
 

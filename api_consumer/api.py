@@ -2,6 +2,8 @@ import asyncio
 import requests
 from functools import partial
 
+from .exceptions import ApiConsumerException
+
 
 class Api:
     """ Base class to consume Django REST Framework APIs """
@@ -25,9 +27,9 @@ class Api:
 
     def get_list(self, item, options=[], page=None):
         # DRF pagination management
-        if page is "next" and self.next:
+        if page == "next" and self.next:
             url = self.next
-        elif page is "prev" and self.prev:
+        elif page == "prev" and self.prev:
             url = self.prev
         elif page is None:
             self.prev = None
@@ -123,7 +125,7 @@ class Api:
         else:
             complement = " - Err {} {}".format(r.request.method, r.status_code)
         err = "API error ({}){}".format(item, complement)
-        raise Exception(err)
+        raise ApiConsumerException(err)
 
     def __str__(self):
         return "{} {}".format(self.url, self.token)
