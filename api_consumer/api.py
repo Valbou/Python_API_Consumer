@@ -1,6 +1,8 @@
 import asyncio
-import requests
 from functools import partial
+from typing import Union
+
+import requests
 
 from .exceptions import ApiConsumerException
 
@@ -9,7 +11,6 @@ class Api:
     """
     Base class to consume Django REST Framework APIs
 
-    token: Auth token to use for api calls
     url: Endpoint URL
     output: expected output format
     prev: URL to previous page
@@ -17,7 +18,6 @@ class Api:
     headers: headers for requests calls
     """
 
-    token: str = ""
     url: str = ""
     output: str = "json"
     prev: str = ""
@@ -27,11 +27,16 @@ class Api:
         "content-type": "application/json; charset=utf8",
     }
 
-    def config(self, url: str, token="", secure=True, output="json", verbose=False):
+    def config(
+        self,
+        url: str,
+        secure: bool = True,
+        output: str = "json",
+        verbose=False,
+    ) -> None:
         """Permit to change config on the fly if needed"""
         self.url = url
         self.secure = secure
-        self.token = token
         self.output = output
         self.verbose = verbose
 
@@ -66,7 +71,7 @@ class Api:
             self.debug(item, r)
         return False
 
-    def get_instance(self, item, id_instance, options=[]):
+    def get_instance(self, item: str, id_instance: Union[str, int], options=[]) -> dict:
         """To collect an unique item"""
         r = asyncio.run(
             self.async_req(
@@ -79,7 +84,6 @@ class Api:
             return r.json()
         else:
             self.debug(item, r)
-        return False
 
     def post_instance(self, item, payload={}, options=[]):
         """To save a new item"""
@@ -103,7 +107,7 @@ class Api:
             r = asyncio.run(
                 self.async_req(
                     funct=requests.put,
-                    url=self._gen_url(item, id_instance=id_instance, options=options),
+                    url=self._gen_url(item, id_instance, options),
                     headers=self.headers,
                     json=payload,
                 )
@@ -120,7 +124,7 @@ class Api:
             r = asyncio.run(
                 self.async_req(
                     funct=requests.patch,
-                    url=self._gen_url(item, id_instance=id_instance, options=options),
+                    url=self._gen_url(item, id_instance, options),
                     headers=self.headers,
                     json=payload,
                 )
@@ -136,7 +140,7 @@ class Api:
         r = asyncio.run(
             self.async_req(
                 funct=requests.delete,
-                url=self._gen_url(item, id_instance=id_instance, options=options),
+                url=self._gen_url(item, id_instance, options),
                 headers=self.headers,
                 data=payload,
             )
@@ -154,21 +158,20 @@ class Api:
                 r.request.method, r.status_code, r.url, r.content
             )
         else:
-            complement = " - Err {} {}".format(r.request.method, r.status_code)
-        err = "API error ({}){}".format(item, complement)
+            complement = f" - Err {r.request.method} {r.status_code}"
+        err = f"API error ({item}){complement}"
         raise ApiConsumerException(err)
 
     def __str__(self):
-        return "{} {}".format(self.url, self.token)
+        return f"{self.url}"
 
     def _gen_url(self, item, id_instance="", options=[]):
         """To construct URL"""
-        return "{}{}/{}/{}?token={}&format={}{}".format(
+        return "{}{}/{}/{}?format={}{}".format(
             ("https://" if self.secure else "http://"),
             self.url,
             item,
             id_instance,
-            self.token,
             self.output,
             self._options(options),
         )

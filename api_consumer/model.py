@@ -1,4 +1,4 @@
-from inspect import ismethod, getmembers
+from inspect import getmembers, ismethod
 
 from .api import Api
 from .exceptions import ModelConsumerException
@@ -41,7 +41,7 @@ class Model(Api):
 
     def save(self, log=False):
         """CREATE - Save the instance in the API"""
-        if self.id is 0:
+        if self.id == 0:
             response = self.post_instance(self.item, payload=self._build_dictionary())
             if response:
                 self.from_json(response)
@@ -107,16 +107,15 @@ class Model(Api):
         """Convert to a type defined in class Model attribute if exist"""
         try:
             return type(getattr(self, key))(value)
-        except:
+        except Exception:
             return value
 
     def factory(self, model_class, dictionary: dict):
         """Return a new instance of the same type with attributes in dictionary"""
         if not issubclass(model_class, Model):
             raise ModelConsumerException(
-                "The class supplied to the factory must be a Model type class (inheritance) and not a {}".format(
-                    type(model_class)
-                )
+                "The class supplied to the factory must be a "
+                f"Model type class (inheritance) and not a {type(model_class)}"
             )
 
         instance = (
@@ -135,17 +134,16 @@ class Model(Api):
         """
         if not issubclass(model_class, Model):
             raise ModelConsumerException(
-                "The class supplied to the factory must be a Model type class (inheritance) and not a {}".format(
-                    type(model_class)
-                )
+                "The class supplied to the factory must be a "
+                f"Model type class (inheritance) and not a {type(model_class)}"
             )
 
-        l = []
+        instances_list = []
         for e in dict_list:
             instance = model_class(*self.args_api)
             instance.from_json(e)
-            l.append(instance)
-        return l
+            instances_list.append(instance)
+        return instances_list
 
     def update(self):
         """UPDATE - Update instance from API"""
