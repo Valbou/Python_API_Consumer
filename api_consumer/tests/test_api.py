@@ -39,6 +39,25 @@ class TestApi(TestCase):
             },
         )
 
+    def test_config_reset(self):
+        api = Api()
+        api._prev = "test"
+        api._next = "test"
+        api.config(
+            url="http://test.com",
+        )
+        self.assertEqual(api._url, "http://test.com")
+        self.assertEqual(api._output, "json")
+        self.assertEqual(api._prev, "")
+        self.assertEqual(api._next, "")
+        self.assertDictEqual(
+            api._headers,
+            {
+                "user-agent": "Vb API Consumer",
+                "content-type": "application/json; charset=utf8",
+            },
+        )
+
     def test_api_to_string(self):
         api = Api()
         api.config("http://test.com")

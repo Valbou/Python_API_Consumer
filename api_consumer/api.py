@@ -37,6 +37,9 @@ class Api:
         self._url = url
         self._output = output
         self.verbose = verbose
+        # reset prev/next URL
+        self._prev = ""
+        self._next = ""
 
     # TODO: change to permit to add more requests to executor
     # with a pending status of queries flushed on demand
