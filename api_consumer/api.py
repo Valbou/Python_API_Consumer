@@ -18,11 +18,11 @@ class Api:
     headers: headers for requests calls
     """
 
-    url: str = ""
-    output: str = "json"
-    prev: str = ""
-    next: str = ""
-    headers: dict = {
+    _url: str = ""
+    _output: str = "json"
+    _prev: str = ""
+    _next: str = ""
+    _headers: dict = {
         "user-agent": "Vb API Consumer",
         "content-type": "application/json; charset=utf8",
     }
@@ -34,8 +34,8 @@ class Api:
         verbose=False,
     ) -> None:
         """Permit to change config on the fly if needed"""
-        self.url = url
-        self.output = output
+        self._url = url
+        self._output = output
         self.verbose = verbose
 
     async def async_req(self, funct, **kargs):
@@ -47,29 +47,28 @@ class Api:
         options = options or []
 
         # DRF pagination management
-        if page == "next" and self.next:
-            url = self.next
-        elif page == "prev" and self.prev:
-            url = self.prev
+        if page == "next" and self._next:
+            url = self._next
+        elif page == "prev" and self._prev:
+            url = self._prev
         elif page is None:
-            self.prev = ""
-            self.next = ""
+            self._prev = ""
+            self._next = ""
             url = self._gen_url(item, options=options)
         else:
-            return False
+            return []
 
         r = asyncio.run(
-            self.async_req(funct=requests.get, url=url, headers=self.headers)
+            self.async_req(funct=requests.get, url=url, headers=self._headers)
         )
 
-        if r.status_code == 200:
-            datas = r.json()
-            self.prev = datas["previous"]
-            self.next = datas["next"]
-            return datas["results"]
-        else:
+        if r.status_code != 200:
             self.debug(item, r)
-        return False
+        else:
+            datas = r.json()
+            self._prev = datas["previous"]
+            self._next = datas["next"]
+            return datas["results"]
 
     def get_instance(self, item: str, id_instance: Union[str, int], options=[]) -> dict:
         """To collect an unique item"""
@@ -77,7 +76,7 @@ class Api:
             self.async_req(
                 funct=requests.get,
                 url=self._gen_url(item, id_instance=id_instance, options=options),
-                headers=self.headers,
+                headers=self._headers,
             )
         )
         if r.status_code == 200:
@@ -91,13 +90,12 @@ class Api:
             self.async_req(
                 funct=requests.post,
                 url=self._gen_url(item, options=options),
-                headers=self.headers,
+                headers=self._headers,
                 json=payload,
             )
         )
         if r.status_code != 201:
             self.debug(item, r)
-            return False
         return r.json()
 
     def put_instance(self, item, payload={}, options=[]):
@@ -108,7 +106,7 @@ class Api:
                 self.async_req(
                     funct=requests.put,
                     url=self._gen_url(item, id_instance, options),
-                    headers=self.headers,
+                    headers=self._headers,
                     json=payload,
                 )
             )
@@ -125,7 +123,7 @@ class Api:
                 self.async_req(
                     funct=requests.patch,
                     url=self._gen_url(item, id_instance, options),
-                    headers=self.headers,
+                    headers=self._headers,
                     json=payload,
                 )
             )
@@ -141,7 +139,7 @@ class Api:
             self.async_req(
                 funct=requests.delete,
                 url=self._gen_url(item, id_instance, options),
-                headers=self.headers,
+                headers=self._headers,
                 data=payload,
             )
         )
@@ -163,16 +161,16 @@ class Api:
         raise ApiConsumerException(err)
 
     def __str__(self):
-        return f"{self.url}"
+        return f"{self._url}"
 
     def _gen_url(self, item, id_instance="", options=[]):
         """To construct URL"""
         # TODO: permit to add an URL formatter object to get more flexibility
         return "{}/{}/{}?format={}{}".format(
-            self.url,
+            self._url,
             item,
             id_instance,
-            self.output,
+            self._output,
             self._options(options),
         )
 

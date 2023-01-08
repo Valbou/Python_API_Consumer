@@ -10,12 +10,12 @@ from api_consumer.exceptions import ApiConsumerException
 class TestApi(TestCase):
     def test_default_values_api(self):
         api = Api()
-        self.assertEqual(api.url, "")
-        self.assertEqual(api.output, "json")
-        self.assertEqual(api.prev, "")
-        self.assertEqual(api.next, "")
+        self.assertEqual(api._url, "")
+        self.assertEqual(api._output, "json")
+        self.assertEqual(api._prev, "")
+        self.assertEqual(api._next, "")
         self.assertDictEqual(
-            api.headers,
+            api._headers,
             {
                 "user-agent": "Vb API Consumer",
                 "content-type": "application/json; charset=utf8",
@@ -27,12 +27,12 @@ class TestApi(TestCase):
         api.config(
             url="http://test.com",
         )
-        self.assertEqual(api.url, "http://test.com")
-        self.assertEqual(api.output, "json")
-        self.assertEqual(api.prev, "")
-        self.assertEqual(api.next, "")
+        self.assertEqual(api._url, "http://test.com")
+        self.assertEqual(api._output, "json")
+        self.assertEqual(api._prev, "")
+        self.assertEqual(api._next, "")
         self.assertDictEqual(
-            api.headers,
+            api._headers,
             {
                 "user-agent": "Vb API Consumer",
                 "content-type": "application/json; charset=utf8",
