@@ -72,8 +72,12 @@ class Api:
             self._next = datas["next"]
             return datas["results"]
 
-    def get_instance(self, item: str, id_instance: Union[str, int], options=[]) -> dict:
+    def get_instance(
+        self, item: str, id_instance: Union[str, int], options: list = None
+    ) -> dict:
         """To collect an unique item"""
+        options = options or []
+
         r = asyncio.run(
             self.async_req(
                 funct=requests.get,
@@ -86,8 +90,10 @@ class Api:
         else:
             self.debug(item, r)
 
-    def post_instance(self, item, payload={}, options=[]):
+    def post_instance(self, item: str, payload: dict = None, options: list = None):
         """To save a new item"""
+        options = options or []
+
         r = asyncio.run(
             self.async_req(
                 funct=requests.post,
@@ -100,9 +106,12 @@ class Api:
             self.debug(item, r)
         return r.json()
 
-    def put_instance(self, item, payload={}, options=[]):
+    def put_instance(self, item, payload: dict = None, options: list = None):
         """To update a complete item"""
+        options = options or []
+        payload = payload or dict()
         id_instance = payload.get("id", None)
+
         if id_instance:
             r = asyncio.run(
                 self.async_req(
@@ -117,9 +126,12 @@ class Api:
             return r.json()
         return False
 
-    def patch_instance(self, item, payload={}, options=[]):
+    def patch_instance(self, item, payload: dict = None, options: list = None):
         """To update partially an item"""
+        options = options or []
+        payload = payload or dict()
         id_instance = payload.get("id", None)
+
         if id_instance:
             r = asyncio.run(
                 self.async_req(
@@ -134,9 +146,12 @@ class Api:
             return r.json()
         return False
 
-    def delete_instance(self, item, payload={}, options=[]):
+    def delete_instance(self, item, payload: dict = None, options: list = None):
         """To delete an item"""
+        options = options or []
+        payload = payload or dict()
         id_instance = payload.get("id", None)
+
         r = asyncio.run(
             self.async_req(
                 funct=requests.delete,
@@ -147,7 +162,6 @@ class Api:
         )
         if r.status_code != 204:
             self.debug(item, r)
-            return False
         return True
 
     def debug(self, item, r):
@@ -165,8 +179,10 @@ class Api:
     def __str__(self):
         return f"{self._url}"
 
-    def _gen_url(self, item, id_instance="", options=[]):
+    def _gen_url(self, item, id_instance="", options: list = None):
         """To construct URL"""
+        options = options or []
+
         # TODO: permit to add an URL formatter object to get more flexibility
         return "{}/{}/{}?format={}{}".format(
             self._url,
