@@ -42,6 +42,7 @@ class TestApi(TestCase):
     def test_get_instance(self):
         api = Api()
         api.config("http://test.com")
+
         with patch("requests.get") as mock:
             r = Response()
             r.status_code = 200
@@ -55,6 +56,7 @@ class TestApi(TestCase):
     def test_error_get_instance(self):
         api = Api()
         api.config("http://test.com")
+
         with patch("requests.get") as mock:
             r = Response()
             r.status_code = 404
@@ -69,6 +71,7 @@ class TestApi(TestCase):
     def test_get_list(self):
         api = Api()
         api.config("http://test.com")
+
         with patch("requests.get") as mock:
             r = Response()
             r.status_code = 200
@@ -86,6 +89,7 @@ class TestApi(TestCase):
     def test_error_get_list(self):
         api = Api()
         api.config("http://test.com")
+
         with patch("requests.get") as mock:
             r = Response()
             r.status_code = 404
@@ -100,6 +104,7 @@ class TestApi(TestCase):
     def test_post_instance(self):
         api = Api()
         api.config("http://test.com")
+
         with patch("requests.post") as mock:
             r = Response()
             r.status_code = 201
@@ -113,6 +118,7 @@ class TestApi(TestCase):
     def test_error_post_instance(self):
         api = Api()
         api.config("http://test.com")
+
         with patch("requests.post") as mock:
             r = Response()
             r.status_code = 500
@@ -123,3 +129,47 @@ class TestApi(TestCase):
             with self.assertRaises(ApiConsumerException):
                 api.post_instance("item")
             self.assertTrue(mock.called)
+
+    def test_put_instance(self):
+        api = Api()
+        api.config("http://test.com")
+        payload = {"id": "1"}
+
+        with patch("requests.put") as mock:
+            r = Response()
+            r.status_code = 200
+            r.json = lambda: {"id": "1", "test": "ok"}
+            mock.return_value = r
+
+            result = api.put_instance("item", payload)
+            self.assertTrue(mock.called)
+            self.assertDictEqual(result, {"id": "1", "test": "ok"})
+
+    def test_patch_instance(self):
+        api = Api()
+        api.config("http://test.com")
+        payload = {"id": "1"}
+
+        with patch("requests.patch") as mock:
+            r = Response()
+            r.status_code = 200
+            r.json = lambda: {"id": "1", "test": "ok"}
+            mock.return_value = r
+
+            result = api.patch_instance("item", payload)
+            self.assertTrue(mock.called)
+            self.assertDictEqual(result, {"id": "1", "test": "ok"})
+
+    def test_delete_instance(self):
+        api = Api()
+        api.config("http://test.com")
+        payload = {"id": "1"}
+
+        with patch("requests.delete") as mock:
+            r = Response()
+            r.status_code = 204
+            mock.return_value = r
+
+            result = api.delete_instance("item", payload)
+            self.assertTrue(mock.called)
+            self.assertTrue(result)
