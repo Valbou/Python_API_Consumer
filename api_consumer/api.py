@@ -38,6 +38,8 @@ class Api:
         self._output = output
         self.verbose = verbose
 
+    # TODO: change to permit to add more requests to executor
+    # with a pending status of queries flushed on demand
     async def async_req(self, funct, **kargs):
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, partial(funct, **kargs))
