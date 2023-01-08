@@ -106,7 +106,7 @@ class Api:
             self._debug(item, r)
         return r.json()
 
-    def put_instance(self, item, payload: dict = None, options: list = None):
+    def put_instance(self, item: str, payload: dict = None, options: list = None):
         """To update a complete item"""
         options = options or []
         payload = payload or dict()
@@ -126,7 +126,7 @@ class Api:
             return r.json()
         return False
 
-    def patch_instance(self, item, payload: dict = None, options: list = None):
+    def patch_instance(self, item: str, payload: dict = None, options: list = None):
         """To update partially an item"""
         options = options or []
         payload = payload or dict()
@@ -146,7 +146,7 @@ class Api:
             return r.json()
         return False
 
-    def delete_instance(self, item, payload: dict = None, options: list = None):
+    def delete_instance(self, item: str, payload: dict = None, options: list = None):
         """To delete an item"""
         options = options or []
         payload = payload or dict()
@@ -164,7 +164,7 @@ class Api:
             self._debug(item, r)
         return True
 
-    def _debug(self, item, r):
+    def _debug(self, item: str, r: requests.Response):
         """Helper for debug purposes"""
         complement = ""
         if self.verbose:
@@ -179,13 +179,13 @@ class Api:
     def __str__(self):
         return f"API base endpoint: {self._url}"
 
-    def _gen_url(self, item, id_instance="", options: list = None):
+    def _gen_url(self, item: str, id_instance: str = "", options: list = None):
         """To construct URL"""
         options = options or []
 
         # TODO: permit to add an URL formatter object to get more flexibility
         return f"{self._url}/{item}/{id_instance}?format={self._output}{self._options(options)}"
 
-    def _options(self, options):
+    def _options(self, options: list):
         """Permit to add options on call"""
         return ("&" + "&".join(options)) if len(options) else ""
