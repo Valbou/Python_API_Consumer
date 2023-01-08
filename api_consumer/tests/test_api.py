@@ -72,9 +72,27 @@ class TestApi(TestCase):
         with patch("requests.get") as mock:
             r = Response()
             r.status_code = 200
-            r.json = lambda: {"previous": "page0", "next": "page2", "results": [{"test1": "ok"}, {"test2": "ok"}]}
+            r.json = lambda: {
+                "previous": "page0",
+                "next": "page2",
+                "results": [{"test1": "ok"}, {"test2": "ok"}],
+            }
             mock.return_value = r
 
             result = api.get_list("item")
             self.assertTrue(mock.called)
             self.assertEqual(result, [{"test1": "ok"}, {"test2": "ok"}])
+
+    def test_error_get_list(self):
+        api = Api()
+        api.config("http://test.com")
+        with patch("requests.get") as mock:
+            r = Response()
+            r.status_code = 404
+            r.request = MagicMock()
+            r.request.method = "get"
+            mock.return_value = r
+
+            with self.assertRaises(ApiConsumerException):
+                api.get_list("item")
+            self.assertTrue(mock.called)
