@@ -39,6 +39,17 @@ class TestApi(TestCase):
             },
         )
 
+    def test_api_to_string(self):
+        api = Api()
+        api.config("http://test.com")
+        self.assertEqual(str(api), "API base endpoint: http://test.com")
+
+    def test_options(self):
+        api = Api()
+        api.config("http://test.com")
+        result = api._options(["limit=15", "filter=blue"])
+        self.assertEqual(result, "&limit=15&filter=blue")
+
     def test_get_instance(self):
         api = Api()
         api.config("http://test.com")
