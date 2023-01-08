@@ -96,3 +96,16 @@ class TestApi(TestCase):
             with self.assertRaises(ApiConsumerException):
                 api.get_list("item")
             self.assertTrue(mock.called)
+
+    def test_post_instance(self):
+        api = Api()
+        api.config("http://test.com")
+        with patch("requests.post") as mock:
+            r = Response()
+            r.status_code = 201
+            r.json = lambda: {"test": "ok"}
+            mock.return_value = r
+
+            result = api.post_instance("item")
+            self.assertTrue(mock.called)
+            self.assertDictEqual(result, {"test": "ok"})
