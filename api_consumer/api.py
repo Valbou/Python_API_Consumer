@@ -30,13 +30,11 @@ class Api:
     def config(
         self,
         url: str,
-        secure: bool = True,
         output: str = "json",
         verbose=False,
     ) -> None:
         """Permit to change config on the fly if needed"""
         self.url = url
-        self.secure = secure
         self.output = output
         self.verbose = verbose
 
@@ -168,8 +166,7 @@ class Api:
     def _gen_url(self, item, id_instance="", options=[]):
         """To construct URL"""
         # TODO: permit to add an URL formatter object to get more flexibility
-        return "{}{}/{}/{}?format={}{}".format(
-            ("https://" if self.secure else "http://"),
+        return "{}/{}/{}?format={}{}".format(
             self.url,
             item,
             id_instance,

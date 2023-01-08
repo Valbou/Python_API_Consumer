@@ -8,9 +8,9 @@ class Model(Api):
     item = None
     id = 0
 
-    def __init__(self, url, token, secure=True, verbose=False):
+    def __init__(self, url, token, verbose=False):
         self.__class__.item = self.__class__.__name__.lower()
-        self.config(url, token, secure, verbose=verbose)
+        self.config(url, token, verbose=verbose)
         if not self.item:
             raise ModelConsumerException(
                 "Item undefined in model {}".format(self.__class__)
@@ -37,7 +37,7 @@ class Model(Api):
 
     @property
     def args_api(self):
-        return (self.url, self.token, self.secure)
+        return (self.url, self.token)
 
     def save(self, log=False):
         """CREATE - Save the instance in the API"""
