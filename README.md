@@ -19,9 +19,9 @@ This basic API consumer was originally created to easily consume a Django REST F
 class User(Model):
   pass
 
-user = User(url="https://example.org/api", token="")
+user = User(url="https://example.org/api")
 
-# GET https://example.org/api/user/5?token=&format=json and hydrate instance
+# GET https://example.org/api/user/5?format=json and hydrate instance
 user.from_db(id=5)
 
 # Give you the first name of this user id 5
@@ -36,7 +36,7 @@ class Foo(Model):
 foo = Foo(*user.args_api)
 limit = 10
 
-# GET https://example.org/api/bar/?limit=10&token=&format=json and create 10 hydrated instances of Foo from api/bar/
+# GET https://example.org/api/bar/?format=json&limit=10 and create 10 hydrated instances of Foo from api/bar/
 many_foo = foo.from_query(
   options=['limit={}'.format(limit)],
   limit=limit,
