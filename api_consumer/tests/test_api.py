@@ -145,6 +145,22 @@ class TestApi(TestCase):
             self.assertTrue(mock.called)
             self.assertDictEqual(result, {"id": "1", "test": "ok"})
 
+    def test_error_put_instance(self):
+        api = Api()
+        api.config("http://test.com")
+        payload = {"id": "1"}
+
+        with patch("requests.put") as mock:
+            r = Response()
+            r.status_code = 500
+            r.request = MagicMock()
+            r.request.method = "put"
+            mock.return_value = r
+
+            with self.assertRaises(ApiConsumerException):
+                api.put_instance("item", payload)
+            self.assertTrue(mock.called)
+
     def test_patch_instance(self):
         api = Api()
         api.config("http://test.com")
@@ -160,6 +176,22 @@ class TestApi(TestCase):
             self.assertTrue(mock.called)
             self.assertDictEqual(result, {"id": "1", "test": "ok"})
 
+    def test_error_patch_instance(self):
+        api = Api()
+        api.config("http://test.com")
+        payload = {"id": "1"}
+
+        with patch("requests.patch") as mock:
+            r = Response()
+            r.status_code = 500
+            r.request = MagicMock()
+            r.request.method = "put"
+            mock.return_value = r
+
+            with self.assertRaises(ApiConsumerException):
+                api.patch_instance("item", payload)
+            self.assertTrue(mock.called)
+
     def test_delete_instance(self):
         api = Api()
         api.config("http://test.com")
@@ -173,3 +205,19 @@ class TestApi(TestCase):
             result = api.delete_instance("item", payload)
             self.assertTrue(mock.called)
             self.assertTrue(result)
+
+    def test_error_delete_instance(self):
+        api = Api()
+        api.config("http://test.com")
+        payload = {"id": "1"}
+
+        with patch("requests.delete") as mock:
+            r = Response()
+            r.status_code = 500
+            r.request = MagicMock()
+            r.request.method = "put"
+            mock.return_value = r
+
+            with self.assertRaises(ApiConsumerException):
+                api.delete_instance("item", payload)
+            self.assertTrue(mock.called)
