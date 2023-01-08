@@ -184,13 +184,7 @@ class Api:
         options = options or []
 
         # TODO: permit to add an URL formatter object to get more flexibility
-        return "{}/{}/{}?format={}{}".format(
-            self._url,
-            item,
-            id_instance,
-            self._output,
-            self._options(options),
-        )
+        return f"{self._url}/{item}/{id_instance}?format={self._output}{self._options(options)}"
 
     def _options(self, options):
         """Permit to add options on call"""
