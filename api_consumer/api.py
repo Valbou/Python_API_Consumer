@@ -42,8 +42,10 @@ class Api:
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, partial(funct, **kargs))
 
-    def get_list(self, item, options=[], page=None):
+    def get_list(self, item: str, options: list = None, page=None) -> list:
         """To collect a list of items"""
+        options = options or []
+
         # DRF pagination management
         if page == "next" and self.next:
             url = self.next
