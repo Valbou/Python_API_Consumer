@@ -64,5 +64,3 @@ account.save()
 ```py
 account.delete()
 ```
-
-Unit tests are coming soon...
