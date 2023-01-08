@@ -4,7 +4,8 @@ Django REST Framework API Consumer
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
 ![Python v3.7](https://img.shields.io/badge/python-v3.7-blue "Python v3.7")
 
-This basic API consumer was originally created to easily consume a Django REST Framework API from a PyQT application on a Raspberry Pi.
+This API consumer was originally created to easily consume a Django REST Framework API from a PyQT application on a Raspberry Pi.
+This, with the goal to achieve this in a similar way to Django ORM use.
 
 ## Dependencies
 * asyncio
@@ -38,7 +39,7 @@ limit = 10
 
 # GET https://example.org/api/bar/?format=json&limit=10 and create 10 hydrated instances of Foo from api/bar/
 many_foo = foo.from_query(
-  options=['limit={}'.format(limit)],
+  options=[f"limit={limit}"],
   limit=limit,
   model_class=Foo
   )
@@ -64,3 +65,6 @@ account.save()
 ```py
 account.delete()
 ```
+
+You need any development, please create an issue or submit a pull request :)
+Enjoy !
