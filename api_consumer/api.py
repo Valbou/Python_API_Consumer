@@ -65,7 +65,7 @@ class Api:
         )
 
         if r.status_code != 200:
-            self.debug(item, r)
+            self._debug(item, r)
         else:
             datas = r.json()
             self._prev = datas["previous"]
@@ -88,7 +88,7 @@ class Api:
         if r.status_code == 200:
             return r.json()
         else:
-            self.debug(item, r)
+            self._debug(item, r)
 
     def post_instance(self, item: str, payload: dict = None, options: list = None):
         """To save a new item"""
@@ -103,7 +103,7 @@ class Api:
             )
         )
         if r.status_code != 201:
-            self.debug(item, r)
+            self._debug(item, r)
         return r.json()
 
     def put_instance(self, item, payload: dict = None, options: list = None):
@@ -122,7 +122,7 @@ class Api:
                 )
             )
             if r.status_code != 200:
-                self.debug(item, r)
+                self._debug(item, r)
             return r.json()
         return False
 
@@ -142,7 +142,7 @@ class Api:
                 )
             )
             if r.status_code != 200:
-                self.debug(item, r)
+                self._debug(item, r)
             return r.json()
         return False
 
@@ -161,10 +161,10 @@ class Api:
             )
         )
         if r.status_code != 204:
-            self.debug(item, r)
+            self._debug(item, r)
         return True
 
-    def debug(self, item, r):
+    def _debug(self, item, r):
         """Helper for debug purposes"""
         complement = ""
         if self.verbose:
@@ -177,7 +177,7 @@ class Api:
         raise ApiConsumerException(err)
 
     def __str__(self):
-        return f"{self._url}"
+        return f"API base endpoint: {self._url}"
 
     def _gen_url(self, item, id_instance="", options: list = None):
         """To construct URL"""
