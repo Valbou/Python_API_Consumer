@@ -66,15 +66,15 @@ class TestApi(TestCase):
                 api.get_instance("item", 1)
             self.assertTrue(mock.called)
 
-    def test_get_list_instances(self):
+    def test_get_list(self):
         api = Api()
         api.config("http://test.com")
         with patch("requests.get") as mock:
             r = Response()
             r.status_code = 200
-            r.json = lambda: {"test": "ok"}
+            r.json = lambda: {"previous": "page0", "next": "page2", "results": [{"test1": "ok"}, {"test2": "ok"}]}
             mock.return_value = r
 
-            result = api.get_instance("item", 1)
+            result = api.get_list("item")
             self.assertTrue(mock.called)
-            self.assertDictEqual(result, {"test": "ok"})
+            self.assertEqual(result, [{"test1": "ok"}, {"test2": "ok"}])
