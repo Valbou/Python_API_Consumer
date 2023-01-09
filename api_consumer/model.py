@@ -8,8 +8,11 @@ class Model(Api):
     item = None
     id = 0
 
-    def __init__(self, url, verbose=False):
-        self.__class__.item = self.__class__.__name__.lower()
+    def __new__(cls, url: str, verbose: bool = False):
+        cls.item = cls.__name__.lower()
+        return super().__new__(cls)
+
+    def __init__(self, url: str, verbose: bool = False):
         self.config(url, verbose=verbose)
         if not self.item:
             raise ModelConsumerException(
