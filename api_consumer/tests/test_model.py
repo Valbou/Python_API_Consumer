@@ -9,11 +9,11 @@ class User(Model):
 
 class TestModel(TestCase):
     def test_model_creation(self):
-        user = User("http://test.com/api/user")
+        user = User("http://test.com/api")
         self.assertEqual(user.item, "user")
-        self.assertEqual(user._url, "http://test.com/api/user")
+        self.assertEqual(user._url, "http://test.com/api")
 
-
-# TODO:
-# - Mock API methods
-# - Test model methods
+    def test_model_creation_with_given_item(self):
+        user = User("http://test.com/api", "account")
+        self.assertEqual(user.item, "account")
+        self.assertEqual(user._url, "http://test.com/api")

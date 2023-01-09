@@ -8,16 +8,17 @@ class Model(Api):
     item = None
     id = 0
 
-    def __new__(cls, url: str, verbose: bool = False):
-        cls.item = cls.__name__.lower()
+    def __new__(cls, url: str, item: str = "", verbose: bool = False):
+        if cls.item is None:
+            cls.item = cls.__name__.lower()
+
+        if item:
+            cls.item = item
+
         return super().__new__(cls)
 
-    def __init__(self, url: str, verbose: bool = False):
+    def __init__(self, url: str, item: str = "", verbose: bool = False):
         self.config(url, verbose=verbose)
-        if not self.item:
-            raise ModelConsumerException(
-                "Item undefined in model {}".format(self.__class__)
-            )
 
     def _is_public_attribute(self, member):
         return (
