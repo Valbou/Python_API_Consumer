@@ -8,9 +8,9 @@ class Model(Api):
     item = None
     id = 0
 
-    def __init__(self, url, token, verbose=False):
+    def __init__(self, url, verbose=False):
         self.__class__.item = self.__class__.__name__.lower()
-        self.config(url, token, verbose=verbose)
+        self.config(url, verbose=verbose)
         if not self.item:
             raise ModelConsumerException(
                 "Item undefined in model {}".format(self.__class__)
@@ -37,7 +37,7 @@ class Model(Api):
 
     @property
     def args_api(self):
-        return (self.url, self.token)
+        return self.url
 
     def save(self, log=False):
         """CREATE - Save the instance in the API"""
@@ -95,7 +95,6 @@ class Model(Api):
                 return self.factory_list(model_class, items)
         else:
             return items
-        return False
 
     def from_json(self, datas: dict):
         """Load an instance from a dict"""
