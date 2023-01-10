@@ -36,7 +36,7 @@ class Api:
         """Permit to change config on the fly if needed"""
         self._url = url
         self._output = output
-        self.verbose = verbose
+        self._verbose = verbose
         # reset prev/next URL
         self._prev = ""
         self._next = ""
@@ -170,7 +170,7 @@ class Api:
     def _debug(self, item: str, r: requests.Response):
         """Helper for debug purposes"""
         complement = ""
-        if self.verbose:
+        if self._verbose:
             complement = "\nErr {} {}\n{}\n##########\n{}\n##########".format(
                 r.request.method, r.status_code, r.url, r.content
             )
