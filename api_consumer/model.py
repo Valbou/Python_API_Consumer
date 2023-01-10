@@ -6,15 +6,15 @@ from .exceptions import ModelConsumerException
 
 
 class Model(Api):
-    item = None
+    _item = None
     id = 0
 
     def __new__(cls, url: str, item: str = "", verbose: bool = False):
-        if cls.item is None:
-            cls.item = cls.__name__.lower()
+        if cls._item is None:
+            cls._item = cls.__name__.lower()
 
         if item:
-            cls.item = item
+            cls._item = item
 
         return super().__new__(cls)
 
@@ -31,7 +31,7 @@ class Model(Api):
     def _is_object(self, member: Tuple[str, any]) -> bool:
         return isinstance(member[1], Model)
 
-    def _build_dictionary(self):
+    def _build_dictionary(self) -> dict:
         dictionary = {}
         for member in getmembers(self):
             if self._is_public_attribute(member):
@@ -47,7 +47,7 @@ class Model(Api):
     def save(self, log=False):
         """CREATE - Save the instance in the API"""
         if self.id == 0:
-            response = self.post_instance(self.item, payload=self._build_dictionary())
+            response = self.post_instance(self._item, payload=self._build_dictionary())
             if response:
                 self.from_json(response)
         else:
@@ -59,14 +59,14 @@ class Model(Api):
     def from_db(self, id_instance: int = 0):
         """READ - Load the instance from the API"""
         if not id_instance and not self.id:
-            raise ModelConsumerException("ID required for item {}".format(self.item))
+            raise ModelConsumerException("ID required for item {}".format(self._item))
         elif not id_instance:
             id_instance = self.id
 
-        datas = self.get_instance(self.item, id_instance)
+        datas = self.get_instance(self._item, id_instance)
         if not datas:
             raise ModelConsumerException(
-                "Error retriving item {}({}) from API".format(self.item, id_instance)
+                "Error retriving item {}({}) from API".format(self._item, id_instance)
             )
         return self.from_json(datas)
 
@@ -77,7 +77,7 @@ class Model(Api):
             if not item:
                 item = model_class.__name__.lower()
         else:
-            item = self.item
+            item = self._item
 
         if not item:
             raise ModelConsumerException(
@@ -151,11 +151,11 @@ class Model(Api):
 
     def update(self):
         """UPDATE - Update instance from API"""
-        return self.patch_instance(self.item, payload=self._build_dictionary())
+        return self.patch_instance(self._item, payload=self._build_dictionary())
 
     def delete(self):
         """ " DELETE - Delete instance in the API"""
-        return self.delete_instance(self.item, payload={"id": self.id})
+        return self.delete_instance(self._item, payload={"id": self.id})
 
     def control(self, dictionary: dict):
         """Control datas"""
@@ -178,7 +178,7 @@ class Model(Api):
         else:
             raise ModelConsumerException(
                 "Convert id to instance (attribute {}) impossible in {}".format(
-                    attribute, self.item
+                    attribute, self._item
                 )
             )
 
@@ -190,7 +190,7 @@ class Model(Api):
         else:
             raise ModelConsumerException(
                 "Convert id to instance (attribute {}) impossible in {}".format(
-                    attribute, self.item
+                    attribute, self._item
                 )
             )
 
@@ -199,7 +199,7 @@ class Model(Api):
         from datetime import date
 
         try:
-            fichier = "logs/{}-{}.log".format(date.today(), self.item)
+            fichier = "logs/{}-{}.log".format(date.today(), self._item)
             with open(fichier, "a+") as f:
                 f.write(json.dumps(self._build_dictionary()))
         except ModelConsumerException as e:
