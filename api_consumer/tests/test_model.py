@@ -53,3 +53,7 @@ class TestModel(TestCase):
         user = User("http://test.com")
         result = user._build_dictionary()
         self.assertEqual(set(result.keys()), {"get_private", "id", "verbose", "public"})
+
+    def test_get_url(self):
+        user = User("http://test.com")
+        self.assertEqual(user.get_url(), "http://test.com")
