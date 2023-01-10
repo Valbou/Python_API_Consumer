@@ -40,9 +40,8 @@ class Model(Api):
                 dictionary[member[0]] = member[1].id
         return dictionary
 
-    @property
-    def args_api(self):
-        return self.url
+    def get_url(self):
+        return self._url
 
     def save(self, log=False):
         """CREATE - Save the instance in the API"""
@@ -122,11 +121,7 @@ class Model(Api):
                 f"Model type class (inheritance) and not a {type(model_class)}"
             )
 
-        instance = (
-            model_class(*self.args_api)
-            if model_class
-            else self.__class__(*self.args_api)
-        )
+        instance = model_class(self._url) if model_class else self.__class__(self._url)
         instance.from_json(dictionary)
         return instance
 
@@ -144,7 +139,7 @@ class Model(Api):
 
         instances_list = []
         for e in dict_list:
-            instance = model_class(*self.args_api)
+            instance = model_class(self._url)
             instance.from_json(e)
             instances_list.append(instance)
         return instances_list

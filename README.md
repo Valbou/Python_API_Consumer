@@ -34,7 +34,7 @@ print(user.first_name)
 class Foo(Model):
   item = "bar"
 
-foo = Foo(*user.args_api)
+foo = Foo(user.get_url())
 limit = 10
 
 # GET https://example.org/api/bar/?format=json&limit=10 and create 10 hydrated instances of Foo from api/bar/
@@ -55,7 +55,7 @@ user.save()
 
 ### POST Create
 ```py
-account = User(*foo.args_api)
+account = User(foo.get_url())
 account.fisrt_name = "Bob"
 account.email = "bob@example.org"
 account.save()
