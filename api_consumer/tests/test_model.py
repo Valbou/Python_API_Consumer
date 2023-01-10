@@ -68,10 +68,10 @@ class TestModel(TestCase):
 
     def test_save(self):
         user = User("http://test.com")
-        # No id == creation
         user.id = 0
         user.public = "not public"
 
+        # Without id it's a creation
         with patch("requests.post") as mock:
             r = Response()
             r.status_code = 201
@@ -83,6 +83,7 @@ class TestModel(TestCase):
             self.assertEqual(user.public, "public")
             self.assertEqual(user.id, 123)
 
+        # With id it's an update
         with patch("requests.patch") as mock:
             r = Response()
             r.status_code = 200
