@@ -1,4 +1,5 @@
 from inspect import getmembers, ismethod
+from typing import Tuple
 
 from .api import Api
 from .exceptions import ModelConsumerException
@@ -20,7 +21,7 @@ class Model(Api):
     def __init__(self, url: str, item: str = "", verbose: bool = False):
         self.config(url, verbose=verbose)
 
-    def _is_public_attribute(self, member):
+    def _is_public_attribute(self, member: Tuple[str, any]) -> bool:
         return (
             not ismethod(member[1])
             and not isinstance(member[1], Model)
