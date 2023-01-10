@@ -25,5 +25,9 @@ class TestModel(TestCase):
         self.assertTrue(user._is_public_attribute(("public", "public")))
         self.assertFalse(user._is_public_attribute(("_protected", "protected")))
         self.assertFalse(user._is_public_attribute(("__private", "private")))
-        self.assertFalse(user._is_public_attribute(("_is_public_attribute", user._is_public_attribute)))
+        self.assertFalse(
+            user._is_public_attribute(
+                ("_is_public_attribute", user._is_public_attribute)
+            )
+        )
         self.assertFalse(user._is_public_attribute(("save", user.save)))
