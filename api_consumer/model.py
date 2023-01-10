@@ -28,7 +28,7 @@ class Model(Api):
             and member[0][0] != "_"
         )
 
-    def _is_object(self, member):
+    def _is_object(self, member: Tuple[str, any]) -> bool:
         return isinstance(member[1], Model)
 
     def _build_dictionary(self):

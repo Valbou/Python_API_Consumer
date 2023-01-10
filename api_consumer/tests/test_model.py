@@ -31,3 +31,9 @@ class TestModel(TestCase):
             )
         )
         self.assertFalse(user._is_public_attribute(("save", user.save)))
+
+    def test_is_object_model(self):
+        user = User("http://test.com")
+        self.assertTrue(user._is_object(("user", user)))
+        self.assertFalse(user._is_object(("public", "public")))
+        self.assertFalse(user._is_object(("__private", 12)))
