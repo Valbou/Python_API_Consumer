@@ -52,7 +52,4 @@ class TestModel(TestCase):
     def test_build_dictionary(self):
         user = User("http://test.com")
         result = user._build_dictionary()
-        self.assertEqual(
-            set(result.keys()), 
-            {"get_private", "id", "verbose", "public"}
-        )
+        self.assertEqual(set(result.keys()), {"get_private", "id", "verbose", "public"})
