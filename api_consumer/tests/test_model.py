@@ -1,4 +1,7 @@
 from unittest import TestCase
+from unittest.mock import patch
+
+from requests import Response
 
 from api_consumer.model import Model
 
@@ -52,8 +55,41 @@ class TestModel(TestCase):
     def test_build_dictionary(self):
         user = User("http://test.com")
         result = user._build_dictionary()
-        self.assertEqual(set(result.keys()), {"get_private", "id", "verbose", "public"})
+        # Please avoid use of property decorator on Model inheritance classes
+        # Else we may attempt to set a value to a property getter or send it in payload
+        self.assertDictEqual(
+            result,
+            {"get_private": "private", "id": 0, "public": "public"},
+        )
 
     def test_get_url(self):
         user = User("http://test.com")
         self.assertEqual(user.get_url(), "http://test.com")
+
+    def test_save(self):
+        user = User("http://test.com")
+        # No id == creation
+        user.id = 0
+        user.public = "not public"
+
+        with patch("requests.post") as mock:
+            r = Response()
+            r.status_code = 201
+            r.json = lambda: {"id": 123, "public": "public"}
+            mock.return_value = r
+
+            user_copy = user.save()
+            self.assertDictEqual(user_copy, {"id": 123, "public": "public"})
+            self.assertEqual(user.public, "public")
+            self.assertEqual(user.id, 123)
+
+        with patch("requests.patch") as mock:
+            r = Response()
+            r.status_code = 200
+            r.json = lambda: {"id": 123, "public": "public patched"}
+            mock.return_value = r
+
+            user_copy = user.save()
+            self.assertDictEqual(user_copy, {"id": 123, "public": "public patched"})
+            self.assertEqual(user.public, "public patched")
+            self.assertEqual(user.id, 123)

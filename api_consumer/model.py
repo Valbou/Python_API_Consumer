@@ -43,14 +43,16 @@ class Model(Api):
     def get_url(self):
         return self._url
 
-    def save(self, log=False):
+    def save(self, log: bool = False) -> dict:
         """CREATE - Save the instance in the API"""
         if self.id == 0:
             response = self.post_instance(self._item, payload=self._build_dictionary())
-            if response:
-                self.from_json(response)
         else:
             response = self.update()
+
+        if response:
+            self.from_json(response)
+
         if log:
             self.log()
         return response
@@ -190,6 +192,7 @@ class Model(Api):
             )
 
     def log(self):
+        # TODO: use logging instead of this
         import json
         from datetime import date
 
