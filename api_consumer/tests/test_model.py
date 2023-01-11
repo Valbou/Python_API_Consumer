@@ -104,9 +104,7 @@ class TestModel(TestCase):
         with patch("requests.get") as mock:
             r = Response()
             r.status_code = 200
-            r.json = lambda: {
-                "id": 321, "public": "public test"
-            }
+            r.json = lambda: {"id": 321, "public": "public test"}
             mock.return_value = r
 
             user.from_db(321)
@@ -120,9 +118,7 @@ class TestModel(TestCase):
         with patch("requests.get") as mock:
             r = Response()
             r.status_code = 200
-            r.json = lambda: {
-                "id": 321, "public": "public test 2"
-            }
+            r.json = lambda: {"id": 321, "public": "public test 2"}
             mock.return_value = r
 
             user.from_db()
