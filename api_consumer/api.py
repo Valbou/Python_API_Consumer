@@ -93,7 +93,9 @@ class Api:
         else:
             self._debug(item, r)
 
-    def post_instance(self, item: str, payload: dict = None, options: list = None) -> dict:
+    def post_instance(
+        self, item: str, payload: dict = None, options: list = None
+    ) -> dict:
         """To save a new item"""
         options = options or []
 
@@ -109,7 +111,9 @@ class Api:
             self._debug(item, r)
         return r.json()
 
-    def put_instance(self, item: str, payload: dict = None, options: list = None) -> Optional[dict]:
+    def put_instance(
+        self, item: str, payload: dict = None, options: list = None
+    ) -> Optional[dict]:
         """To update a complete item"""
         options = options or []
         payload = payload or dict()
@@ -129,7 +133,9 @@ class Api:
             return r.json()
         return None
 
-    def patch_instance(self, item: str, payload: dict = None, options: list = None) -> Optional[dict]:
+    def patch_instance(
+        self, item: str, payload: dict = None, options: list = None
+    ) -> Optional[dict]:
         """To update partially an item"""
         options = options or []
         payload = payload or dict()
@@ -149,7 +155,9 @@ class Api:
             return r.json()
         return None
 
-    def delete_instance(self, item: str, payload: dict = None, options: list = None) -> bool:
+    def delete_instance(
+        self, item: str, payload: dict = None, options: list = None
+    ) -> bool:
         """To delete an item"""
         options = options or []
         payload = payload or dict()
