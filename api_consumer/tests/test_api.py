@@ -191,6 +191,13 @@ class TestApi(TestCase):
                 api.put_instance("item", payload)
             self.assertTrue(mock.called)
 
+    def test_put_instance_none(self):
+        api = Api()
+        api.config("http://test.com")
+        payload = {"public": "public"}
+        result = api.put_instance("item", payload)
+        self.assertIsNone(result)
+
     def test_patch_instance(self):
         api = Api()
         api.config("http://test.com")
@@ -221,6 +228,13 @@ class TestApi(TestCase):
             with self.assertRaises(ApiConsumerException):
                 api.patch_instance("item", payload)
             self.assertTrue(mock.called)
+
+    def test_patch_instance_none(self):
+        api = Api()
+        api.config("http://test.com")
+        payload = {"public": "public"}
+        result = api.patch_instance("item", payload)
+        self.assertIsNone(result)
 
     def test_delete_instance(self):
         api = Api()

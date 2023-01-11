@@ -1,6 +1,6 @@
 import asyncio
 from functools import partial
-from typing import Union
+from typing import Union, Optional
 
 import requests
 
@@ -93,7 +93,7 @@ class Api:
         else:
             self._debug(item, r)
 
-    def post_instance(self, item: str, payload: dict = None, options: list = None):
+    def post_instance(self, item: str, payload: dict = None, options: list = None) -> dict:
         """To save a new item"""
         options = options or []
 
@@ -109,7 +109,7 @@ class Api:
             self._debug(item, r)
         return r.json()
 
-    def put_instance(self, item: str, payload: dict = None, options: list = None):
+    def put_instance(self, item: str, payload: dict = None, options: list = None) -> Optional[dict]:
         """To update a complete item"""
         options = options or []
         payload = payload or dict()
@@ -127,9 +127,9 @@ class Api:
             if r.status_code != 200:
                 self._debug(item, r)
             return r.json()
-        return False
+        return None
 
-    def patch_instance(self, item: str, payload: dict = None, options: list = None):
+    def patch_instance(self, item: str, payload: dict = None, options: list = None) -> Optional[dict]:
         """To update partially an item"""
         options = options or []
         payload = payload or dict()
@@ -147,9 +147,9 @@ class Api:
             if r.status_code != 200:
                 self._debug(item, r)
             return r.json()
-        return False
+        return None
 
-    def delete_instance(self, item: str, payload: dict = None, options: list = None):
+    def delete_instance(self, item: str, payload: dict = None, options: list = None) -> bool:
         """To delete an item"""
         options = options or []
         payload = payload or dict()
@@ -179,16 +179,16 @@ class Api:
         err = f"API error ({item}){complement}"
         raise ApiConsumerException(err)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"API base endpoint: {self._url}"
 
-    def _gen_url(self, item: str, id_instance: str = "", options: list = None):
+    def _gen_url(self, item: str, id_instance: str = "", options: list = None) -> str:
         """To construct URL"""
         options = options or []
 
         # TODO: permit to add an URL formatter object to get more flexibility
         return f"{self._url}/{item}/{id_instance}?format={self._output}{self._options(options)}"
 
-    def _options(self, options: list):
+    def _options(self, options: list) -> str:
         """Permit to add options on call"""
         return ("&" + "&".join(options)) if len(options) else ""
