@@ -68,7 +68,7 @@ class TestModel(TestCase):
         user = User("http://test.com")
         self.assertEqual(user.get_url(), "http://test.com")
 
-    def test_save(self):
+    def test_save_post(self):
         user = User("http://test.com")
         user.id = 0
         user.public = "not public"
@@ -85,6 +85,12 @@ class TestModel(TestCase):
             self.assertDictEqual(user_copy, {"id": 123, "public": "public"})
             self.assertEqual(user.public, "public")
             self.assertEqual(user.id, 123)
+
+    def test_save_patch(self):
+        user = User("http://test.com")
+        user.id = 123
+        user.public = "not public"
+        self.assertEqual(user.public, "not public")
 
         # With id it's an update
         with patch("requests.patch") as mock:
