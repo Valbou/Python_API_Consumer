@@ -7,6 +7,8 @@ from api_consumer.model import Model
 
 
 class User(Model):
+    """For testing only"""
+
     public = "public"
     _protected = "protected"
     __private = "private"
@@ -70,6 +72,7 @@ class TestModel(TestCase):
         user = User("http://test.com")
         user.id = 0
         user.public = "not public"
+        self.assertEqual(user.public, "not public")
 
         # Without id it's a creation
         with patch("requests.post") as mock:
@@ -94,3 +97,34 @@ class TestModel(TestCase):
             self.assertDictEqual(user_copy, {"id": 123, "public": "public patched"})
             self.assertEqual(user.public, "public patched")
             self.assertEqual(user.id, 123)
+
+    def test_from_db_with_id_in_args(self):
+        user = User("http://test.com")
+
+        with patch("requests.get") as mock:
+            r = Response()
+            r.status_code = 200
+            r.json = lambda: {
+                "id": 321, "public": "public test"
+            }
+            mock.return_value = r
+
+            user.from_db(321)
+            self.assertEqual(user.id, 321)
+            self.assertEqual(user.public, "public test")
+
+    def test_from_db_with_id_in_model(self):
+        user = User("http://test.com")
+        user.id = 321
+
+        with patch("requests.get") as mock:
+            r = Response()
+            r.status_code = 200
+            r.json = lambda: {
+                "id": 321, "public": "public test 2"
+            }
+            mock.return_value = r
+
+            user.from_db()
+            self.assertEqual(user.id, 321)
+            self.assertEqual(user.public, "public test 2")
