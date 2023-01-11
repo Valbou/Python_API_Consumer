@@ -1,8 +1,11 @@
 from inspect import getmembers, ismethod
-from typing import Tuple
+from typing import Tuple, Type, TypeVar, Any
 
 from .api import Api
 from .exceptions import ModelConsumerException
+
+
+T = TypeVar("T", bound="Model")
 
 
 class Model(Api):
@@ -57,7 +60,7 @@ class Model(Api):
             self.log()
         return response
 
-    def from_db(self, id_instance: int = 0):
+    def from_db(self, id_instance: int = 0) -> bool:
         """READ - Load the instance from the API"""
         if not id_instance and not self.id:
             raise ModelConsumerException("ID required for item {}".format(self._item))
@@ -71,8 +74,11 @@ class Model(Api):
             )
         return self.from_json(datas)
 
-    def from_query(self, options=[], limit=0, model_class=None):
+    def from_query(
+        self, options: list = None, limit: int = 0, model_class: Type[T] = None
+    ):
         """Return a list of dict items or an instance list of items if a class is specified"""
+        options = options or []
         if model_class:
             item = model_class.item
             if not item:
@@ -108,7 +114,7 @@ class Model(Api):
             self.__setattr__(k, self.auto_typing(k, v))
         return self.control(datas)
 
-    def auto_typing(self, key, value):
+    def auto_typing(self, key: str, value: Any) -> Any:
         """Convert to a type defined in class Model attribute if exist"""
         try:
             return type(getattr(self, key))(value)

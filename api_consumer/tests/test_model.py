@@ -113,7 +113,8 @@ class TestModel(TestCase):
             r.json = lambda: {"id": 321, "public": "public test"}
             mock.return_value = r
 
-            user.from_db(321)
+            result = user.from_db(321)
+            self.assertTrue(result)
             self.assertEqual(user.id, 321)
             self.assertEqual(user.public, "public test")
 
@@ -127,6 +128,36 @@ class TestModel(TestCase):
             r.json = lambda: {"id": 321, "public": "public test 2"}
             mock.return_value = r
 
-            user.from_db()
+            result = user.from_db()
+            self.assertTrue(result)
             self.assertEqual(user.id, 321)
             self.assertEqual(user.public, "public test 2")
+
+    def test_from_query(self):
+        # TODO
+        pass
+
+    def test_from_json(self):
+        user = User("http://test.com")
+        datas = {"id": 123, "public": "public from json"}
+        result = user.from_json(datas)
+        self.assertTrue(result)
+        self.assertEqual(user.id, 123)
+        self.assertEqual(user.public, "public from json")
+
+    def test_auto_typing_int(self):
+        user = User("http://test.com")
+        result = user.auto_typing("id", "123")
+        self.assertIsInstance(result, int)
+        self.assertEqual(result, 123)
+
+    def test_auto_typing_str(self):
+        user = User("http://test.com")
+        result = user.auto_typing("public", 123)
+        self.assertIsInstance(result, str)
+        self.assertEqual(result, "123")
+
+    def test_auto_typing_not_modified(self):
+        user = User("http://test.com")
+        result = user.auto_typing("id", "test")
+        self.assertEqual(result, "test")
