@@ -73,9 +73,12 @@ class Api:
             self._debug(item, r)
         else:
             datas = r.json()
-            self._prev = datas["previous"]
-            self._next = datas["next"]
-            return datas["results"]
+            if isinstance(datas, dict):
+                self._prev = datas.get("previous", "")
+                self._next = datas.get("next", "")
+                return datas.get("results", [])
+            else:
+                return datas
 
     def get_instance(
         self, item: str, id_instance: Union[str, int], options: Optional[list] = None

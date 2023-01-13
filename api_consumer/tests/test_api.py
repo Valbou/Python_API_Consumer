@@ -116,6 +116,20 @@ class TestApi(TestCase):
             mock.assert_called()
             self.assertEqual(result, [{"test1": "ok"}, {"test2": "ok"}])
 
+    def test_get_list_not_wrapped(self):
+        api = Api()
+        api.config("http://test.com")
+
+        with patch("requests.get") as mock:
+            r = Response()
+            r.status_code = 200
+            r.json = lambda: [{"test1": "ok"}, {"test2": "ok"}]
+            mock.return_value = r
+
+            result = api.get_list("item")
+            mock.assert_called()
+            self.assertEqual(result, [{"test1": "ok"}, {"test2": "ok"}])
+
     def test_error_get_list(self):
         api = Api()
         api.config("http://test.com")
