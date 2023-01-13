@@ -79,7 +79,7 @@ class Model(Api):
         items = []
         if limit:
             items = self.get_list(item, options=options)
-            while self.next and len(items) < limit:
+            while self._next and len(items) < limit:
                 items += self.get_list(item, page="next")
             items = items[:limit]
         else:

@@ -139,6 +139,80 @@ class TestModel(TestCase):
             self.assertEqual(user.id, 321)
             self.assertEqual(user.public, "public test 2")
 
+    def test_limitless_not_paginated_results(self):
+        user = User("http://test.com")
+
+        with patch("requests.get") as mock:
+            r = Response()
+            r.status_code = 200
+            r.json = lambda: [
+                {"id": 123, "public": "public test 1"},
+                {"id": 321, "public": "public test 2"},
+            ]
+            mock.return_value = r
+
+            results = user._paginated_results("user", 0, [])
+            mock.assert_called()
+            self.assertEqual(
+                results,
+                [
+                    {"id": 123, "public": "public test 1"},
+                    {"id": 321, "public": "public test 2"},
+                ]
+            )
+
+    def test_limited_to_one_paginated_results(self):
+        user = User("http://test.com")
+
+        with patch("requests.get") as mock:
+            r = Response()
+            r.status_code = 200
+            r.json = lambda: [
+                {"id": 123, "public": "public test 1"},
+                {"id": 321, "public": "public test 2"},
+                {"id": 147, "public": "public test 3"},
+                {"id": 369, "public": "public test 4"},
+            ]
+            mock.return_value = r
+
+            results = user._paginated_results("user", 2, [])
+            mock.assert_called()
+            self.assertEqual(
+                results,
+                [
+                    {"id": 123, "public": "public test 1"},
+                    {"id": 321, "public": "public test 2"},
+                ]
+            )
+
+    def test_limited_to_many_paginated_results(self):
+        user = User("http://test.com")
+
+        with patch("requests.get") as mock:
+            r = Response()
+            r.status_code = 200
+            r.json = lambda: {
+                "previous": "page0",
+                "next": "page2",
+                "results": [
+                    {"id": 123, "public": "public test 1"},
+                    {"id": 321, "public": "public test 2"},
+                ]
+            }
+            mock.return_value = r
+
+            results = user._paginated_results("user", 3, [])
+            mock.assert_called()
+            self.assertEqual(mock.call_count, 2)
+            self.assertEqual(
+                results,
+                [
+                    {"id": 123, "public": "public test 1"},
+                    {"id": 321, "public": "public test 2"},
+                    {"id": 123, "public": "public test 1"},
+                ]
+            )
+
     def test_define_item(self):
         user = User("http://test.com")
         result = user._define_item(User)
@@ -168,8 +242,37 @@ class TestModel(TestCase):
         Group._item = "group"
 
     def test_from_query(self):
-        # TODO:
-        pass
+        user = User("http://test.com")
+
+        with patch("requests.get") as mock:
+            r = Response()
+            r.status_code = 200
+            r.json = lambda: [
+                {"id": 123, "public": "public test 1"},
+                {"id": 321, "public": "public test 2"},
+            ]
+            mock.return_value = r
+
+            results = user.from_query(model_class=User)
+            self.assertIsInstance(results, list)
+            for i, result in enumerate(results):
+                with self.subTest(i):
+                    self.assertIsInstance(result, User)
+
+    def test_from_query_fetch_one_instance(self):
+        user = User("http://test.com")
+
+        with patch("requests.get") as mock:
+            r = Response()
+            r.status_code = 200
+            r.json = lambda: [
+                {"id": 123, "public": "public test 1"},
+                {"id": 321, "public": "public test 2"},
+            ]
+            mock.return_value = r
+
+            results = user.from_query(limit=1, model_class=User)
+            self.assertIsInstance(results, User)
 
     def test_from_json(self):
         user = User("http://test.com")
