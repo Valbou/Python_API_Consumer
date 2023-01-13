@@ -74,6 +74,7 @@ class Api:
         else:
             datas = r.json()
             if isinstance(datas, dict):
+                # TODO: permit to overload names
                 self._prev = datas.get("previous", "")
                 self._next = datas.get("next", "")
                 return datas.get("results", [])
