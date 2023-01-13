@@ -25,6 +25,12 @@ class User(Model):
         return self.__private
 
 
+class Group(Model):
+    """For testing only"""
+
+    _item = "grouped"
+
+
 class TestModel(TestCase):
     def test_model_creation(self):
         user = User("http://test.com/api")
@@ -133,8 +139,36 @@ class TestModel(TestCase):
             self.assertEqual(user.id, 321)
             self.assertEqual(user.public, "public test 2")
 
+    def test_define_item(self):
+        user = User("http://test.com")
+        result = user._define_item(User)
+        self.assertEqual(result, User._item)
+        self.assertEqual(result, "user")
+
+    def test_define_item_without_class(self):
+        user = User("http://test.com")
+        result = user._define_item()
+        self.assertEqual(result, User._item)
+        self.assertEqual(result, "user")
+
+    def test_define_item_with_another_class(self):
+        user = User("http://test.com")
+        self.assertEqual(Group._item, "grouped")
+        result = user._define_item(Group)
+        self.assertEqual(result, Group._item)
+        self.assertEqual(result, "grouped")
+
+    def test_define_item_without_item_and_with_another_class(self):
+        user = User("http://test.com")
+        Group._item = ""
+        self.assertEqual(user._item, "user")
+        self.assertEqual(Group._item, "")
+        result = user._define_item(Group)
+        self.assertEqual(result, "group")
+        Group._item = "group"
+
     def test_from_query(self):
-        # TODO
+        # TODO:
         pass
 
     def test_from_json(self):

@@ -1,5 +1,5 @@
 from inspect import getmembers, ismethod
-from typing import Tuple, Type, TypeVar, Any
+from typing import Tuple, Type, TypeVar, Any, Optional
 
 from .api import Api
 from .exceptions import ModelConsumerException
@@ -86,23 +86,24 @@ class Model(Api):
             items = self.get_list(item, options=options)
         return items
 
+    def _define_item(self, model_class: Optional[Type[T]] = None):
+        """We need an item set to continue"""
+        if model_class:
+            item = model_class._item or model_class.__name__.lower()
+        else:
+            item = self._item or self.__name__.lower()
+        return item
+
     def from_query(
-        self, options: list = None, limit: int = 0, model_class: Type[T] = None
+        self,
+        options: list = None,
+        limit: int = 0,
+        model_class: Optional[Type[T]] = None,
     ):
         """Return a list of dict items or an instance list of items if a class is specified"""
         options = options or []
-        if model_class:
-            item = model_class.item
-            if not item:
-                item = model_class.__name__.lower()
-        else:
-            item = self._item
 
-        if not item:
-            raise ModelConsumerException(
-                "### Error", model_class.__name__, "no item defined ->", item
-            )
-
+        item = self._define_item(model_class)
         items: list = self._paginated_results(item, limit, options)
 
         if model_class and items:
