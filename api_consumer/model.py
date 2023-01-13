@@ -103,53 +103,57 @@ class Model(Api):
         """Return a list of dict items or an instance list of items if a class is specified"""
         options = options or []
 
+        model_class = self._check_model_class(model_class)
         item = self._define_item(model_class)
         items: list = self._paginated_results(item, limit, options)
 
         if model_class and items:
             if limit == 1:
-                return self.factory(model_class, items[0])
+                return self.factory(items[0], model_class)
             else:
-                return self.factory_list(model_class, items)
+                return self.factory_list(items, model_class)
         else:
             return items
 
     def from_json(self, datas: dict):
         """Load an instance from a dict"""
         for k, v in datas.items():
-            self.__setattr__(k, self.auto_typing(k, v))
+            self.__setattr__(k, self._auto_typing(k, v))
         return self.control(datas)
 
-    def auto_typing(self, key: str, value: Any) -> Any:
+    def _auto_typing(self, key: str, value: Any) -> Any:
         """Convert to a type defined in class Model attribute if exist"""
         try:
             return type(getattr(self, key))(value)
         except Exception:
             return value
 
-    def factory(self, model_class, dictionary: dict):
-        """Return a new instance of the same type with attributes in dictionary"""
+    def _check_model_class(self, model_class: Optional[Type[T]] = None) -> Type[T]:
+        if not model_class:
+            model_class = self.__class__
+
         if not issubclass(model_class, Model):
             raise ModelConsumerException(
                 "The class supplied to the factory must be a "
                 f"Model type class (inheritance) and not a {type(model_class)}"
             )
+        return model_class
+
+    def factory(self, dictionary: dict, model_class: Optional[Type[T]] = None):
+        """Return a new instance of the same type with attributes in dictionary"""
+        model_class = self._check_model_class(model_class)
 
         instance = model_class(self._url) if model_class else self.__class__(self._url)
         instance.from_json(dictionary)
         return instance
 
-    def factory_list(self, model_class, dict_list: list):
+    def factory_list(self, dict_list: list, model_class: Optional[Type[T]] = None):
         """
         Convert a list of dict to a list of instance
         Class must be an uninstantiated class and not a class name
         ex: class = Model
         """
-        if not issubclass(model_class, Model):
-            raise ModelConsumerException(
-                "The class supplied to the factory must be a "
-                f"Model type class (inheritance) and not a {type(model_class)}"
-            )
+        model_class = self._check_model_class(model_class)
 
         instances_list = []
         for e in dict_list:

@@ -284,17 +284,38 @@ class TestModel(TestCase):
 
     def test_auto_typing_int(self):
         user = User("http://test.com")
-        result = user.auto_typing("id", "123")
+        result = user._auto_typing("id", "123")
         self.assertIsInstance(result, int)
         self.assertEqual(result, 123)
 
     def test_auto_typing_str(self):
         user = User("http://test.com")
-        result = user.auto_typing("public", 123)
+        result = user._auto_typing("public", 123)
         self.assertIsInstance(result, str)
         self.assertEqual(result, "123")
 
     def test_auto_typing_not_modified(self):
         user = User("http://test.com")
-        result = user.auto_typing("id", "test")
+        result = user._auto_typing("id", "test")
         self.assertEqual(result, "test")
+
+    def test_check_model_class(self):
+        user = User("http://test.com")
+        result = user._check_model_class(User)
+        self.assertEqual(result, User)
+
+    def test_factory_without_model_class(self):
+        user = User("http://test.com")
+        data = {"id": 123, "public": "public from factory"}
+        new_user = user.factory(data)
+        self.assertIsInstance(new_user, User)
+        self.assertEqual(new_user.id, 123)
+        self.assertEqual(new_user.public, "public from factory")
+
+    def test_factory_with_model_class(self):
+        user = User("http://test.com")
+        data = {"id": 123, "public": "public from factory"}
+        new_group = user.factory(data, Group)
+        self.assertIsInstance(new_group, Group)
+        self.assertEqual(new_group.id, 123)
+        self.assertEqual(new_group.public, "public from factory")
