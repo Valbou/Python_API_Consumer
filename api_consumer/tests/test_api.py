@@ -80,7 +80,7 @@ class TestApi(TestCase):
             mock.return_value = r
 
             result = api.get_instance("item", 1)
-            self.assertTrue(mock.called)
+            mock.assert_called()
             self.assertDictEqual(result, {"test": "ok"})
 
     def test_error_get_instance(self):
@@ -96,7 +96,7 @@ class TestApi(TestCase):
 
             with self.assertRaises(ApiConsumerException):
                 api.get_instance("item", 1)
-            self.assertTrue(mock.called)
+            mock.assert_called()
 
     def test_get_list(self):
         api = Api()
@@ -113,7 +113,7 @@ class TestApi(TestCase):
             mock.return_value = r
 
             result = api.get_list("item")
-            self.assertTrue(mock.called)
+            mock.assert_called()
             self.assertEqual(result, [{"test1": "ok"}, {"test2": "ok"}])
 
     def test_error_get_list(self):
@@ -129,7 +129,7 @@ class TestApi(TestCase):
 
             with self.assertRaises(ApiConsumerException):
                 api.get_list("item")
-            self.assertTrue(mock.called)
+            mock.assert_called()
 
     def test_post_instance(self):
         api = Api()
@@ -142,7 +142,7 @@ class TestApi(TestCase):
             mock.return_value = r
 
             result = api.post_instance("item")
-            self.assertTrue(mock.called)
+            mock.assert_called()
             self.assertDictEqual(result, {"test": "ok"})
 
     def test_error_post_instance(self):
@@ -158,7 +158,7 @@ class TestApi(TestCase):
 
             with self.assertRaises(ApiConsumerException):
                 api.post_instance("item")
-            self.assertTrue(mock.called)
+            mock.assert_called()
 
     def test_put_instance(self):
         api = Api()
@@ -172,7 +172,7 @@ class TestApi(TestCase):
             mock.return_value = r
 
             result = api.put_instance("item", payload)
-            self.assertTrue(mock.called)
+            mock.assert_called()
             self.assertDictEqual(result, {"id": "1", "test": "ok"})
 
     def test_error_put_instance(self):
@@ -189,7 +189,7 @@ class TestApi(TestCase):
 
             with self.assertRaises(ApiConsumerException):
                 api.put_instance("item", payload)
-            self.assertTrue(mock.called)
+            mock.assert_called()
 
     def test_put_instance_none(self):
         api = Api()
@@ -210,7 +210,7 @@ class TestApi(TestCase):
             mock.return_value = r
 
             result = api.patch_instance("item", payload)
-            self.assertTrue(mock.called)
+            mock.assert_called()
             self.assertDictEqual(result, {"id": "1", "test": "ok"})
 
     def test_error_patch_instance(self):
@@ -227,7 +227,7 @@ class TestApi(TestCase):
 
             with self.assertRaises(ApiConsumerException):
                 api.patch_instance("item", payload)
-            self.assertTrue(mock.called)
+            mock.assert_called()
 
     def test_patch_instance_none(self):
         api = Api()
@@ -247,7 +247,7 @@ class TestApi(TestCase):
             mock.return_value = r
 
             result = api.delete_instance("item", payload)
-            self.assertTrue(mock.called)
+            mock.assert_called()
             self.assertTrue(result)
 
     def test_error_delete_instance(self):
@@ -264,4 +264,4 @@ class TestApi(TestCase):
 
             with self.assertRaises(ApiConsumerException):
                 api.delete_instance("item", payload)
-            self.assertTrue(mock.called)
+            mock.assert_called()
