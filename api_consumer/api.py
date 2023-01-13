@@ -47,7 +47,9 @@ class Api:
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, partial(funct, **kargs))
 
-    def get_list(self, item: str, options: list = None, page=None) -> list:
+    def get_list(
+        self, item: str, options: Optional[list] = None, page: Optional[str] = None
+    ) -> list:
         """To collect a list of items"""
         options = options or []
 
@@ -76,7 +78,7 @@ class Api:
             return datas["results"]
 
     def get_instance(
-        self, item: str, id_instance: Union[str, int], options: list = None
+        self, item: str, id_instance: Union[str, int], options: Optional[list] = None
     ) -> dict:
         """To collect an unique item"""
         options = options or []
@@ -94,7 +96,7 @@ class Api:
             self._debug(item, r)
 
     def post_instance(
-        self, item: str, payload: dict = None, options: list = None
+        self, item: str, payload: Optional[dict] = None, options: Optional[list] = None
     ) -> dict:
         """To save a new item"""
         options = options or []
@@ -112,7 +114,7 @@ class Api:
         return r.json()
 
     def put_instance(
-        self, item: str, payload: dict = None, options: list = None
+        self, item: str, payload: Optional[dict] = None, options: Optional[list] = None
     ) -> Optional[dict]:
         """To update a complete item"""
         options = options or []
@@ -134,7 +136,7 @@ class Api:
         return None
 
     def patch_instance(
-        self, item: str, payload: dict = None, options: list = None
+        self, item: str, payload: Optional[dict] = None, options: Optional[list] = None
     ) -> Optional[dict]:
         """To update partially an item"""
         options = options or []
@@ -156,7 +158,7 @@ class Api:
         return None
 
     def delete_instance(
-        self, item: str, payload: dict = None, options: list = None
+        self, item: str, payload: Optional[dict] = None, options: Optional[list] = None
     ) -> bool:
         """To delete an item"""
         options = options or []
@@ -191,7 +193,9 @@ class Api:
     def __str__(self) -> str:
         return f"API base endpoint: {self._url}"
 
-    def _gen_url(self, item: str, id_instance: str = "", options: list = None) -> str:
+    def _gen_url(
+        self, item: str, id_instance: str = "", options: Optional[list] = None
+    ) -> str:
         """To construct URL"""
         options = options or []
 
