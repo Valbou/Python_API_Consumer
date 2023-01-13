@@ -63,16 +63,28 @@ class Model(Api):
     def from_db(self, id_instance: int = 0) -> bool:
         """READ - Load the instance from the API"""
         if not id_instance and not self.id:
-            raise ModelConsumerException("ID required for item {}".format(self._item))
+            raise ModelConsumerException(f"ID required for item {self._item}")
         elif not id_instance:
             id_instance = self.id
 
         datas = self.get_instance(self._item, id_instance)
         if not datas:
             raise ModelConsumerException(
-                "Error retriving item {}({}) from API".format(self._item, id_instance)
+                f"Error retriving item {self._item}({id_instance}) from API"
             )
         return self.from_json(datas)
+
+    def _paginated_results(self, item: str, limit: int, options: list) -> list:
+        """Build a list with the expected number of elements"""
+        items = []
+        if limit:
+            items = self.get_list(item, options=options)
+            while self.next and len(items) < limit:
+                items += self.get_list(item, page="next")
+            items = items[:limit]
+        else:
+            items = self.get_list(item, options=options)
+        return items
 
     def from_query(
         self, options: list = None, limit: int = 0, model_class: Type[T] = None
@@ -91,14 +103,7 @@ class Model(Api):
                 "### Error", model_class.__name__, "no item defined ->", item
             )
 
-        items = []
-        if limit:
-            items = self.get_list(item, options=options)
-            while self.next and len(items) < limit:
-                items += self.get_list(item, page="next")
-            items = items[:limit]
-        else:
-            items = self.get_list(item, options=options)
+        items: list = self._paginated_results(item, limit, options)
 
         if model_class and items:
             if limit == 1:
@@ -175,14 +180,13 @@ class Model(Api):
 
     def id_to_object(self, attribute: str, instance):
         """Composition from ids"""
-        id = getattr(self, attribute)
-        if isinstance(id, int) and isinstance(instance, Model):
-            self.__setattr__(attribute, instance.from_db(id))
+        id_instance = getattr(self, attribute)
+        if isinstance(id_instance, int) and isinstance(instance, Model):
+            self.__setattr__(attribute, instance.from_db(id_instance))
         else:
             raise ModelConsumerException(
-                "Convert id to instance (attribute {}) impossible in {}".format(
-                    attribute, self._item
-                )
+                f"Convert id to instance (attribute {attribute})"
+                f" impossible in {self._item}"
             )
 
     def object_to_id(self, attribute: str):
@@ -192,9 +196,8 @@ class Model(Api):
             self.__setattr__(attribute, instance.id)
         else:
             raise ModelConsumerException(
-                "Convert id to instance (attribute {}) impossible in {}".format(
-                    attribute, self._item
-                )
+                f"Convert id to instance (attribute {attribute})"
+                f" impossible in {self._item}"
             )
 
     def log(self):
@@ -203,7 +206,7 @@ class Model(Api):
         from datetime import date
 
         try:
-            fichier = "logs/{}-{}.log".format(date.today(), self._item)
+            fichier = f"logs/{date.today()}-{self._item}.log"
             with open(fichier, "a+") as f:
                 f.write(json.dumps(self._build_dictionary()))
         except ModelConsumerException as e:

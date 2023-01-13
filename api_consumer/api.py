@@ -179,8 +179,9 @@ class Api:
         """Helper for debug purposes"""
         complement = ""
         if self._verbose:
-            complement = "\nErr {} {}\n{}\n##########\n{}\n##########".format(
-                r.request.method, r.status_code, r.url, r.content
+            complement = (
+                f"\nErr {r.request.method} {r.status_code}\n"
+                f"{r.url}\n##########\n{r.content}\n##########"
             )
         else:
             complement = f" - Err {r.request.method} {r.status_code}"
