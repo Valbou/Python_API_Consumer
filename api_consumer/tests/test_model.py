@@ -158,7 +158,7 @@ class TestModel(TestCase):
                 [
                     {"id": 123, "public": "public test 1"},
                     {"id": 321, "public": "public test 2"},
-                ]
+                ],
             )
 
     def test_limited_to_one_paginated_results(self):
@@ -182,7 +182,7 @@ class TestModel(TestCase):
                 [
                     {"id": 123, "public": "public test 1"},
                     {"id": 321, "public": "public test 2"},
-                ]
+                ],
             )
 
     def test_limited_to_many_paginated_results(self):
@@ -197,7 +197,7 @@ class TestModel(TestCase):
                 "results": [
                     {"id": 123, "public": "public test 1"},
                     {"id": 321, "public": "public test 2"},
-                ]
+                ],
             }
             mock.return_value = r
 
@@ -210,7 +210,7 @@ class TestModel(TestCase):
                     {"id": 123, "public": "public test 1"},
                     {"id": 321, "public": "public test 2"},
                     {"id": 123, "public": "public test 1"},
-                ]
+                ],
             )
 
     def test_define_item(self):
