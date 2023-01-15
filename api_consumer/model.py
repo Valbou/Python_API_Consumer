@@ -35,13 +35,13 @@ class Model(Api):
         return isinstance(member[1], Model)
 
     def _build_dictionary(self) -> dict:
-        dictionary = {}
+        data = {}
         for member in getmembers(self):
             if self._is_public_attribute(member):
-                dictionary[member[0]] = member[1]
+                data[member[0]] = member[1]
             elif self._is_object(member):
-                dictionary[member[0]] = member[1].id
-        return dictionary
+                data[member[0]] = member[1].id
+        return data
 
     def get_url(self):
         return self._url
@@ -117,7 +117,7 @@ class Model(Api):
         """Load an instance from a dict"""
         for k, v in data.items():
             self.__setattr__(k, self._auto_typing(k, v))
-        return self.control(data)
+        return self.is_up_to_date(data)
 
     def _auto_typing(self, key: str, value: Any) -> Any:
         """Convert to a type defined in class Model attribute if exist"""
@@ -166,16 +166,13 @@ class Model(Api):
         """ " DELETE - Delete instance in the API"""
         return self.delete_instance(self._item, payload={"id": self.id})
 
-    def control(self, dictionary: dict):
-        """Control data"""
+    def is_up_to_date(self, data: dict):
+        """Control data is up to date"""
         # TODO: Manage lists and lists of id / instances (M2M & O2M)
-        for k, _ in dictionary.items():
-            if not getattr(self, k) == dictionary[k]:
-                return False
-            elif (
-                self._is_object((0, getattr(self, k)))
-                and not getattr(self, k).id == dictionary[k]
-            ):
+        for k, _ in data.items():
+            if (getattr(self, k) != data[k]
+                or (self._is_object((0, getattr(self, k)))
+                and getattr(self, k).id != data[k])):
                 return False
         return True
 
@@ -197,7 +194,7 @@ class Model(Api):
             self.__setattr__(attribute, instance.id)
         else:
             raise ModelConsumerException(
-                f"Convert id to instance (attribute {attribute})"
+                f"Convert instance to id (attribute {attribute})"
                 f" impossible in {self._item}"
             )
 

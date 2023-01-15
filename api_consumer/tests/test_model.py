@@ -333,3 +333,9 @@ class TestModel(TestCase):
                 self.assertIsInstance(r, User)
                 self.assertEqual(r.id, i + 1)
                 self.assertEqual(r.public, f"public test {i+1}")
+
+    def test_is_up_to_date(self):
+        user = User("http://test.com")
+        user.from_json({"id": 123, "public": "public"})
+        self.assertFalse(user.is_up_to_date({"id": 123, "public": "modified public"}))
+        self.assertFalse(user.is_up_to_date({"id": 321, "public": "public"}))
