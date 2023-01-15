@@ -1,10 +1,14 @@
 import asyncio
+import logging
 from functools import partial
 from typing import Union, Optional
 
 import requests
 
 from .exceptions import ApiConsumerException
+
+
+logger = logging.getLogger(__name__)
 
 
 class Api:
@@ -192,6 +196,7 @@ class Api:
         else:
             complement = f" - Err {r.request.method} {r.status_code}"
         err = f"API error ({item}){complement}"
+        logger.error(err)
         raise ApiConsumerException(err)
 
     def __str__(self) -> str:

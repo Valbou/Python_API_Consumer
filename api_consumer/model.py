@@ -1,3 +1,4 @@
+import logging
 from inspect import getmembers, ismethod
 from typing import Tuple, Type, TypeVar, Any, Optional, List, Union
 
@@ -5,6 +6,7 @@ from .api import Api
 from .exceptions import ModelConsumerException
 
 
+logger = logging.getLogger(__name__)
 T = TypeVar("T", bound="Model")
 
 
@@ -48,30 +50,29 @@ class Model(Api):
     def get_url(self):
         return self._url
 
-    def save(self, log: bool = False) -> dict:
+    def save(self) -> dict:
         """CREATE - Save the instance in the API"""
         if self.id == 0:
             response = self.post_instance(self._item, payload=self._build_dictionary())
             self.from_json(response)
         else:
             response = self.update()
-
-        if log:
-            self.log()
         return response
 
     def get(self, id_instance: Optional[Union[int, str]] = None) -> bool:
         """READ - Load the instance from the API"""
         if not id_instance and not self.id:
-            raise ModelConsumerException(f"ID required for item {self._item}")
+            err = f"ID required for item {self._item}"
+            logger.error(err)
+            raise ModelConsumerException(err)
         elif not id_instance:
             id_instance = self.id
 
         data = self.get_instance(self._item, id_instance)
         if not data:
-            raise ModelConsumerException(
-                f"Error retriving item {self._item}({id_instance}) from API"
-            )
+            err = f"Error retriving item {self._item}({id_instance}) from API"
+            logger.error(err)
+            raise ModelConsumerException(err)
         return self.from_json(data)
 
     def _paginated_results(self, item: str, limit: int, options: list) -> list:
@@ -133,10 +134,12 @@ class Model(Api):
             model_class = self.__class__
 
         if not issubclass(model_class, Model):
-            raise ModelConsumerException(
+            err = (
                 "The class supplied to the factory must be a "
                 f"Model type class (inheritance) and not a {type(model_class)}"
             )
+            logger.error(err)
+            raise ModelConsumerException(err)
         return model_class
 
     def factory(self, data: dict, model_class: Optional[Type[T]] = None):
@@ -186,10 +189,12 @@ class Model(Api):
             instance.get(id_instance)
             self.__setattr__(attribute, instance)
         else:
-            raise ModelConsumerException(
+            err = (
                 f"Convert id to instance (attribute {attribute})"
                 f" impossible in {self._item}"
             )
+            logger.error(err)
+            raise ModelConsumerException(err)
 
     def object_to_id(self, attribute: str):
         """Decomposition from instance"""
@@ -197,19 +202,9 @@ class Model(Api):
         if isinstance(instance, Model):
             self.__setattr__(attribute, instance.id)
         else:
-            raise ModelConsumerException(
+            err = (
                 f"Convert instance to id (attribute {attribute})"
                 f" impossible in {self._item}"
             )
-
-    def log(self):
-        # TODO: use logging instead of this
-        import json
-        from datetime import date
-
-        try:
-            fichier = f"logs/{date.today()}-{self._item}.log"
-            with open(fichier, "a+") as f:
-                f.write(json.dumps(self._build_dictionary()))
-        except ModelConsumerException as e:
-            print("Model.log Exception :", e)
+            logger.error(err)
+            raise ModelConsumerException(err)
