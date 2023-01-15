@@ -331,5 +331,5 @@ class TestModel(TestCase):
         for i, r in enumerate(results):
             with self.subTest(i):
                 self.assertIsInstance(r, User)
-                self.assertEqual(r.id, i+1)
+                self.assertEqual(r.id, i + 1)
                 self.assertEqual(r.public, f"public test {i+1}")

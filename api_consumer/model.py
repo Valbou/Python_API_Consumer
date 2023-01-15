@@ -147,7 +147,9 @@ class Model(Api):
         instance.from_json(data)
         return instance
 
-    def factory_list(self, data_list: list, model_class: Optional[Type[T]] = None) -> List[Type[T]]:
+    def factory_list(
+        self, data_list: list, model_class: Optional[Type[T]] = None
+    ) -> List[Type[T]]:
         """
         Convert a list of dict to a list of instance
         Class must be an uninstantiated class and not a class name
