@@ -10,6 +10,15 @@ REST API Consumer
 This API consumer was originally created to easily consume a Django REST Framework API from a PyQT application on a Raspberry Pi.
 This, with the goal to achieve this in a similar way to Django ORM use.
 
+__With Python_API_Consumer, you can consume easily numerous API from any provider, in a easier way than a query a database.__
+Nothing to learn, nothing to configure, you can just use it as show below.
+This module do this for you:
+* Build URL
+* Format Queries
+* Hydrate objects
+* Handle errors
+* Log errors
+
 It will consume any REST API URL tree in a near future.
 And probably not only JSON format.
 
