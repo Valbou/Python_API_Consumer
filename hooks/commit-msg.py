@@ -10,7 +10,7 @@ def check_git_commit_name(msg):
     if re.match(r"^(#[0-9]+) (.*)", msg):
         return 0
     print(
-        f"{Back.RED} Message commit must start by a ticket reference {Style.RESET_ALL}",
+        f"{Back.RED} Message commit must start by a ticket reference {Style.RESET_ALL}.",
         f"Invalid: {msg}",
         "Valid example: #42 my commit message",
         sep="\n",
