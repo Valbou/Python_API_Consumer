@@ -1,14 +1,17 @@
-# DRF_API_Consumer
-Django REST Framework API Consumer
+# Python_API_Consumer
+REST API Consumer
 
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
 ![Python v3.7](https://img.shields.io/badge/python-v3.7-blue "Python v3.7")
 ![Tests 50 passed](https://img.shields.io/badge/tests-50%20passed-green "Tests 50 passed")
-![Code quality A](https://img.shields.io/badge/code%20quality-A-green "Code quality A")
 ![Coverage 97%](https://img.shields.io/badge/coverage-97-green "Coverage 97%")
+![Code quality A](https://img.shields.io/badge/code%20quality-A-green "Code quality A")
 
 This API consumer was originally created to easily consume a Django REST Framework API from a PyQT application on a Raspberry Pi.
 This, with the goal to achieve this in a similar way to Django ORM use.
+
+It will consume any REST API URL tree in a near future.
+And probably not only JSON format.
 
 ## Dependencies
 * asyncio
@@ -26,7 +29,7 @@ class User(Model):
 user = User(url="https://example.org/api/user")
 
 # GET https://example.org/api/user/5?format=json and hydrate instance
-user.from_db(id=5)
+user.get(id=5)
 
 # Give you the first name of this user id 5
 print(user.first_name)
