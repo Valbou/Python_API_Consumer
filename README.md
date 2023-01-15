@@ -20,7 +20,7 @@ This, with the goal to achieve this in a similar way to Django ORM use.
 class User(Model):
   pass
 
-user = User(url="https://example.org/api")
+user = User(url="https://example.org/api/user")
 
 # GET https://example.org/api/user/5?format=json and hydrate instance
 user.from_db(id=5)
@@ -34,16 +34,17 @@ print(user.first_name)
 class Foo(Model):
   item = "bar"
 
-foo = Foo(user.get_url())
+foo = Foo("ttps://example.org/api/bar")
 limit = 10
 
-# GET https://example.org/api/bar/?format=json&limit=10 and create 10 hydrated instances of Foo from api/bar/
+# GET https://example.org/api/bar?format=json&limit=10 and create 10 hydrated instances of Foo from api/bar/
 many_foo = foo.from_query(
   options=[f"limit={limit}"],
   limit=limit,
   model_class=Foo
   )
 # The use of limit=limit parameter is used to add instances beyond the DRF page_size configuration.
+# model_class=Foo is optional because foo is an instance of Foo
 # many_foo is a list of 10 instances of Foo class
 ```
 
@@ -55,7 +56,7 @@ user.save()
 
 ### POST Create
 ```py
-account = User(foo.get_url())
+account = User("https://example.org/api/user")
 account.fisrt_name = "Bob"
 account.email = "bob@example.org"
 account.save()
