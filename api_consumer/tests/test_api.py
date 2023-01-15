@@ -1,4 +1,3 @@
-from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
 from requests import Response
@@ -6,8 +5,10 @@ from requests import Response
 from api_consumer.api import Api
 from api_consumer.exceptions import ApiConsumerException
 
+from .base_test import BaseTestCase
 
-class TestApi(TestCase):
+
+class TestApi(BaseTestCase):
     def test_default_values_api(self):
         api = Api()
         self.assertEqual(api._url, "")

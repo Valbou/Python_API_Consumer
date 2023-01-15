@@ -1,9 +1,10 @@
-from unittest import TestCase
 from unittest.mock import patch
 
 from requests import Response
 
 from api_consumer.model import Model
+
+from .base_test import BaseTestCase
 
 
 class User(Model):
@@ -31,7 +32,7 @@ class Group(Model):
     _item = "grouped"
 
 
-class TestModel(TestCase):
+class TestModel(BaseTestCase):
     def test_model_creation(self):
         user = User("http://test.com/api")
         self.assertEqual(user._item, "user")
