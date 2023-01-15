@@ -14,7 +14,9 @@ __With Python_API_Consumer, you can consume easily numerous API from any provide
 Nothing to learn, nothing to configure, you can just use it as show below.
 This module do this for you:
 * Build URL
-* Format Queries
+* Format queries
+* Send payloads
+* Use appropriate REST methods
 * Hydrate objects
 * Handle errors
 * Log errors
@@ -27,6 +29,7 @@ And probably not only JSON format.
 * requests
 * functools
 * inspect
+* logging
 
 ## Get started:
 
