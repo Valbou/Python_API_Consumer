@@ -50,11 +50,9 @@ class Model(Api):
         """CREATE - Save the instance in the API"""
         if self.id == 0:
             response = self.post_instance(self._item, payload=self._build_dictionary())
+            self.from_json(response)
         else:
             response = self.update()
-
-        if response:
-            self.from_json(response)
 
         if log:
             self.log()
@@ -67,12 +65,12 @@ class Model(Api):
         elif not id_instance:
             id_instance = self.id
 
-        datas = self.get_instance(self._item, id_instance)
-        if not datas:
+        data = self.get_instance(self._item, id_instance)
+        if not data:
             raise ModelConsumerException(
                 f"Error retriving item {self._item}({id_instance}) from API"
             )
-        return self.from_json(datas)
+        return self.from_json(data)
 
     def _paginated_results(self, item: str, limit: int, options: list) -> list:
         """Build a list with the expected number of elements"""
@@ -115,11 +113,11 @@ class Model(Api):
         else:
             return items
 
-    def from_json(self, datas: dict):
+    def from_json(self, data: dict):
         """Load an instance from a dict"""
-        for k, v in datas.items():
+        for k, v in data.items():
             self.__setattr__(k, self._auto_typing(k, v))
-        return self.control(datas)
+        return self.control(data)
 
     def _auto_typing(self, key: str, value: Any) -> Any:
         """Convert to a type defined in class Model attribute if exist"""
@@ -160,14 +158,16 @@ class Model(Api):
 
     def update(self):
         """UPDATE - Update instance from API"""
-        return self.patch_instance(self._item, payload=self._build_dictionary())
+        data = self.patch_instance(self._item, payload=self._build_dictionary())
+        self.from_json(data)
+        return data
 
     def delete(self):
         """ " DELETE - Delete instance in the API"""
         return self.delete_instance(self._item, payload={"id": self.id})
 
     def control(self, dictionary: dict):
-        """Control datas"""
+        """Control data"""
         # TODO: Manage lists and lists of id / instances (M2M & O2M)
         for k, _ in dictionary.items():
             if not getattr(self, k) == dictionary[k]:

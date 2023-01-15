@@ -98,7 +98,7 @@ class TestModel(TestCase):
         user.public = "not public"
         self.assertEqual(user.public, "not public")
 
-        # With id it's an update
+        # With fournished id it's an update
         with patch("requests.patch") as mock:
             r = Response()
             r.status_code = 200
