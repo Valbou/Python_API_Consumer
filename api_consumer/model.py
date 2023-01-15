@@ -1,5 +1,5 @@
 from inspect import getmembers, ismethod
-from typing import Tuple, Type, TypeVar, Any, Optional
+from typing import Tuple, Type, TypeVar, Any, Optional, List
 
 from .api import Api
 from .exceptions import ModelConsumerException
@@ -139,28 +139,22 @@ class Model(Api):
             )
         return model_class
 
-    def factory(self, dictionary: dict, model_class: Optional[Type[T]] = None):
+    def factory(self, data: dict, model_class: Optional[Type[T]] = None):
         """Return a new instance of the same type with attributes in dictionary"""
         model_class = self._check_model_class(model_class)
 
-        instance = model_class(self._url) if model_class else self.__class__(self._url)
-        instance.from_json(dictionary)
+        instance = model_class(self._url)
+        instance.from_json(data)
         return instance
 
-    def factory_list(self, dict_list: list, model_class: Optional[Type[T]] = None):
+    def factory_list(self, data_list: list, model_class: Optional[Type[T]] = None) -> List[Type[T]]:
         """
         Convert a list of dict to a list of instance
         Class must be an uninstantiated class and not a class name
         ex: class = Model
         """
         model_class = self._check_model_class(model_class)
-
-        instances_list = []
-        for e in dict_list:
-            instance = model_class(self._url)
-            instance.from_json(e)
-            instances_list.append(instance)
-        return instances_list
+        return [self.factory(data, model_class) for data in data_list]
 
     def update(self):
         """UPDATE - Update instance from API"""

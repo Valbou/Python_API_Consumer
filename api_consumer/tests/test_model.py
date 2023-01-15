@@ -319,3 +319,17 @@ class TestModel(TestCase):
         self.assertIsInstance(new_group, Group)
         self.assertEqual(new_group.id, 123)
         self.assertEqual(new_group.public, "public from factory")
+
+    def test_factory_list(self):
+        user = User("http://test.com")
+        data_list = [
+            {"id": 1, "public": "public test 1"},
+            {"id": 2, "public": "public test 2"},
+            {"id": 3, "public": "public test 3"},
+        ]
+        results = user.factory_list(data_list)
+        for i, r in enumerate(results):
+            with self.subTest(i):
+                self.assertIsInstance(r, User)
+                self.assertEqual(r.id, i+1)
+                self.assertEqual(r.public, f"public test {i+1}")
