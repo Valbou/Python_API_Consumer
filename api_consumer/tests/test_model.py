@@ -351,7 +351,7 @@ class TestModel(TestCase):
             r.json = lambda: {"id": "abc-efg", "name": "my group"}
             mock.return_value = r
 
-            user.id_to_object('group', group)
+            user.id_to_object("group", group)
             self.assertIsInstance(user.group, Group)
             self.assertEqual(user.group.id, "abc-efg")
             self.assertEqual(user.group.name, "my group")
