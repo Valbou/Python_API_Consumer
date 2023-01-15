@@ -1,4 +1,5 @@
 [run]
+omit = */tests/*
 
 [report]
 # fail_under = 80
