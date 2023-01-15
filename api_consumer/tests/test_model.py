@@ -339,3 +339,30 @@ class TestModel(TestCase):
         user.from_json({"id": 123, "public": "public"})
         self.assertFalse(user.is_up_to_date({"id": 123, "public": "modified public"}))
         self.assertFalse(user.is_up_to_date({"id": 321, "public": "public"}))
+
+    def test_id_to_object(self):
+        user = User("http://test.com")
+        group = Group("http://test.com")
+        user.group = 12
+
+        with patch("requests.get") as mock:
+            r = Response()
+            r.status_code = 200
+            r.json = lambda: {"id": "abc-efg", "name": "my group"}
+            mock.return_value = r
+
+            user.id_to_object('group', group)
+            self.assertIsInstance(user.group, Group)
+            self.assertEqual(user.group.id, "abc-efg")
+            self.assertEqual(user.group.name, "my group")
+
+    def test_object_to_id(self):
+        user = User("http://test.com")
+        group = Group("http://test.com")
+        group.from_json({"id": "abc-efg", "name": "my group"})
+        user.from_json({"id": 123, "public": "public", "group": group})
+        self.assertIsInstance(user.group, Group)
+
+        user.object_to_id("group")
+        self.assertIsInstance(user.group, str)
+        self.assertEqual(user.group, "abc-efg")

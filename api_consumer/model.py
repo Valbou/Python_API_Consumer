@@ -1,5 +1,5 @@
 from inspect import getmembers, ismethod
-from typing import Tuple, Type, TypeVar, Any, Optional, List
+from typing import Tuple, Type, TypeVar, Any, Optional, List, Union
 
 from .api import Api
 from .exceptions import ModelConsumerException
@@ -22,6 +22,8 @@ class Model(Api):
         return super().__new__(cls)
 
     def __init__(self, url: str, item: str = "", verbose: bool = False):
+        # TODO: add config to permit auto composition from attribute name
+        # ex: object_id add a object attribute that contain an Object(Model) instance
         self.config(url, verbose=verbose)
 
     def _is_public_attribute(self, member: Tuple[str, any]) -> bool:
@@ -58,7 +60,7 @@ class Model(Api):
             self.log()
         return response
 
-    def from_db(self, id_instance: int = 0) -> bool:
+    def from_db(self, id_instance: Optional[Union[int, str]] = None) -> bool:
         """READ - Load the instance from the API"""
         if not id_instance and not self.id:
             raise ModelConsumerException(f"ID required for item {self._item}")
@@ -177,11 +179,12 @@ class Model(Api):
                 return False
         return True
 
-    def id_to_object(self, attribute: str, instance):
+    def id_to_object(self, attribute: str, instance: T):
         """Composition from ids"""
         id_instance = getattr(self, attribute)
-        if isinstance(id_instance, int) and isinstance(instance, Model):
-            self.__setattr__(attribute, instance.from_db(id_instance))
+        if isinstance(instance, Model):
+            instance.from_db(id_instance)
+            self.__setattr__(attribute, instance)
         else:
             raise ModelConsumerException(
                 f"Convert id to instance (attribute {attribute})"
