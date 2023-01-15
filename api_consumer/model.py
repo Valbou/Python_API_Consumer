@@ -170,9 +170,10 @@ class Model(Api):
         """Control data is up to date"""
         # TODO: Manage lists and lists of id / instances (M2M & O2M)
         for k, _ in data.items():
-            if (getattr(self, k) != data[k]
-                or (self._is_object((0, getattr(self, k)))
-                and getattr(self, k).id != data[k])):
+            if getattr(self, k) != data[k] or (
+                self._is_object((0, getattr(self, k)))
+                and getattr(self, k).id != data[k]
+            ):
                 return False
         return True
 
