@@ -60,7 +60,7 @@ class Model(Api):
             self.log()
         return response
 
-    def from_db(self, id_instance: Optional[Union[int, str]] = None) -> bool:
+    def get(self, id_instance: Optional[Union[int, str]] = None) -> bool:
         """READ - Load the instance from the API"""
         if not id_instance and not self.id:
             raise ModelConsumerException(f"ID required for item {self._item}")
@@ -183,7 +183,7 @@ class Model(Api):
         """Composition from ids"""
         id_instance = getattr(self, attribute)
         if isinstance(instance, Model):
-            instance.from_db(id_instance)
+            instance.get(id_instance)
             self.__setattr__(attribute, instance)
         else:
             raise ModelConsumerException(

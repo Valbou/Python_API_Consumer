@@ -110,7 +110,7 @@ class TestModel(TestCase):
             self.assertEqual(user.public, "public patched")
             self.assertEqual(user.id, 123)
 
-    def test_from_db_with_id_in_args(self):
+    def test_get_with_id_in_args(self):
         user = User("http://test.com")
 
         with patch("requests.get") as mock:
@@ -119,12 +119,12 @@ class TestModel(TestCase):
             r.json = lambda: {"id": 321, "public": "public test"}
             mock.return_value = r
 
-            result = user.from_db(321)
+            result = user.get(321)
             self.assertTrue(result)
             self.assertEqual(user.id, 321)
             self.assertEqual(user.public, "public test")
 
-    def test_from_db_with_id_in_model(self):
+    def test_get_with_id_in_model(self):
         user = User("http://test.com")
         user.id = 321
 
@@ -134,7 +134,7 @@ class TestModel(TestCase):
             r.json = lambda: {"id": 321, "public": "public test 2"}
             mock.return_value = r
 
-            result = user.from_db()
+            result = user.get()
             self.assertTrue(result)
             self.assertEqual(user.id, 321)
             self.assertEqual(user.public, "public test 2")
