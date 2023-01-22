@@ -4,7 +4,7 @@ REST API Consumer
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
 ![Python v3.7](https://img.shields.io/badge/python-v3.7-blue "Python v3.7")
 ![Tests 50 passed](https://img.shields.io/badge/tests-50%20passed-green "Tests 50 passed")
-![Coverage 97%](https://img.shields.io/badge/coverage-97-green "Coverage 97%")
+![Coverage 97%](https://img.shields.io/badge/coverage-97%25-green "Coverage 97%")
 ![Code quality A](https://img.shields.io/badge/code%20quality-A-green "Code quality A")
 
 This API consumer was originally created to easily consume a Django REST Framework API from a PyQT application on a Raspberry Pi.
