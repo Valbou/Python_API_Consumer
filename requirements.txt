@@ -20,7 +20,7 @@ platformdirs==2.6.2
 pycodestyle==2.10.0
 pyflakes==3.0.1
 PyYAML==6.0
-requests==2.31.0
+requests==2.32.0
 smmap==5.0.0
 stevedore==4.1.1
 tomli==2.0.1
