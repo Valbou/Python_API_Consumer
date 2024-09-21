@@ -1,10 +1,9 @@
 import logging
 from inspect import getmembers, ismethod
-from typing import Tuple, Type, TypeVar, Any, Optional, List, Union
+from typing import Any, List, Optional, Tuple, Type, TypeVar, Union
 
 from .api import Api
 from .exceptions import ModelConsumerException
-
 
 logger = logging.getLogger(__name__)
 T = TypeVar("T", bound="Model")
@@ -15,11 +14,8 @@ class Model(Api):
     id = 0
 
     def __new__(cls, url: str, item: str = "", verbose: bool = False):
-        if cls._item is None:
-            cls._item = cls.__name__.lower()
-
-        if item:
-            cls._item = item
+        if not item or cls._item is None:
+            cls._item = item or cls.__name__.lower()
 
         return super().__new__(cls)
 
@@ -125,6 +121,8 @@ class Model(Api):
     def _auto_typing(self, key: str, value: Any) -> Any:
         """Convert to a type defined in class Model attribute if exist"""
         try:
+            # if self.__annotations__.get(key) in [int, float, str, bytes, list, tuple, set, dict]:
+            #     return self.__annotations__.get(key)(value)
             return type(getattr(self, key))(value)
         except Exception:
             return value
@@ -154,7 +152,7 @@ class Model(Api):
         self, data_list: list, model_class: Optional[Type[T]] = None
     ) -> List[Type[T]]:
         """
-        Convert a list of dict to a list of instance
+        Convert a list of dict to a list of instances
         Class must be an uninstantiated class and not a class name
         ex: class = Model
         """

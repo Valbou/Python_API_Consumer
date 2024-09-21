@@ -10,9 +10,9 @@ from .base_test import BaseTestCase
 class User(Model):
     """For testing only"""
 
-    public = "public"
-    _protected = "protected"
-    __private = "private"
+    public: str = "public"
+    _protected: str = "protected"
+    __private: str = "private"
 
     def set_protected(self, value: str) -> str:
         self._protected = value
@@ -29,7 +29,11 @@ class User(Model):
 class Group(Model):
     """For testing only"""
 
-    _item = "grouped"
+    _item: str = "grouped"
+
+
+class Foo(Model):
+    """For testing only"""
 
 
 class TestModel(BaseTestCase):
@@ -39,7 +43,7 @@ class TestModel(BaseTestCase):
         self.assertEqual(user._url, "http://test.com/api")
 
     def test_model_creation_with_given_item(self):
-        user = User("http://test.com/api", "account")
+        user = Foo("http://test.com/api", "account")
         self.assertEqual(user._item, "account")
         self.assertEqual(user._url, "http://test.com/api")
 

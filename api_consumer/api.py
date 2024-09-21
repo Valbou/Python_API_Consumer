@@ -1,12 +1,11 @@
 import asyncio
 import logging
 from functools import partial
-from typing import Union, Optional
+from typing import Optional, Union
 
 import requests
 
 from .exceptions import ApiConsumerException
-
 
 logger = logging.getLogger(__name__)
 

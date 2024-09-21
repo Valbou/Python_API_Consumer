@@ -15,7 +15,7 @@ def run_app(
 ) -> int:
     print(f"\n{Back.BLUE+Fore.WHITE}Run {app_name}...{Style.RESET_ALL}")
     commands: list = app_method(interpreter, path_project, *args)
-    process: CompletedProcess = run(commands)
+    process: CompletedProcess = run(commands)  # nosec
     if process.returncode > 0:
         print(f"{Back.RED} {app_name} FAILED {Style.RESET_ALL}")
     else:
@@ -27,7 +27,7 @@ def isort_commands(interpreter: str, folder: Path) -> list:
     return [
         interpreter,
         "-m",
-        "black",
+        "isort",
         # "--check",  # Option to avoid write
         folder,
     ]
@@ -62,13 +62,12 @@ def bandit_commands(interpreter: str, folder: Path) -> list:
     ]
 
 
+def coverage_commands(interpreter: str, folder: Path, app_name: str) -> list:
+    return [interpreter, "-m", "coverage", "run", "-m", "unittest"]
+
+
 def unittest_commands(interpreter: str, folder: Path, app_name: str) -> list:
-    return [
-        interpreter,
-        "-m",
-        "unittest",
-        app_name,
-    ]
+    return [interpreter, "-m", "unittest"]
 
 
 if __name__ == "__main__":
@@ -81,7 +80,7 @@ if __name__ == "__main__":
         ("Black", black_commands),
         ("Flake8", flake_commands),
         ("Bandit", bandit_commands),
-        ("Unittest", unittest_commands, "api_consumer"),
+        ("Coverage", coverage_commands, "api_consumer"),
     ]
 
     exit_score: int = 0

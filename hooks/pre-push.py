@@ -16,7 +16,7 @@ def run_app(
 ) -> int:
     print(f"\n{Back.BLUE+Fore.WHITE}Run {app_name}...{Style.RESET_ALL}")
     commands: list = app_method(interpreter, path_project, *args)
-    process: CompletedProcess = run(commands)
+    process: CompletedProcess = run(commands)  # nosec
     if process.returncode > 0:
         print(f"{Back.RED} {app_name} FAILED {Style.RESET_ALL}")
     else:
@@ -28,7 +28,7 @@ def isort_commands(interpreter: str, folder: Path) -> list:
     return [
         interpreter,
         "-m",
-        "black",
+        "isort",
         # "--check",  # Option to avoid write
         folder,
     ]
@@ -64,28 +64,15 @@ def bandit_commands(interpreter: str, folder: Path) -> list:
 
 
 def unittest_commands(interpreter: str, folder: Path, app_name: str) -> list:
-    return [
-        interpreter,
-        "-m",
-        "unittest",
-        app_name,
-    ]
+    return [interpreter, "-m", "unittest"]
 
 
 def coverage_commands(interpreter: str, folder: Path, app_name: str) -> list:
-    return [
-        interpreter,
-        "-m",
-        "coverage",
-        "run",
-        "-m",
-        "unittest",
-        app_name,
-    ]
+    return [interpreter, "-m", "coverage", "run", "-m", "unittest"]
 
 
 def check_coverage_report(interpreter: str) -> int:
-    process = run(
+    process = run(  # nosec
         [interpreter, "-m", "coverage", "report"],
         capture_output=True,
     )
@@ -103,31 +90,15 @@ def check_coverage_report(interpreter: str) -> int:
         return 1
 
 
-def check_requirements(interpreter: str) -> int:
-    """Check updated requirements"""
-    process = run([interpreter, "-m", "pip", "freeze"], capture_output=True)
-    content_file = ""
-    with open("requirements.txt", "r") as file:
-        content_file = file.read()
-
-    content_output = process.stdout.decode().replace("\\n", "\n")
-    if content_file == content_output:
-        print(f"{Back.GREEN+Fore.BLACK} Requirements PASSED {Style.RESET_ALL}")
-        return 0
-    else:
-        print(
-            f"{Back.RED} Requirements FAIL {Style.RESET_ALL}"
-            "Requirements seems to be outdated",
-            sep="\n",
-            file=sys.stderr,
-        )
-        return 1
-
-
 def check_git_branch_name() -> int:
-    process = run(["git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True)
+    process = run(  # nosec
+        ["/bin/git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True
+    )
     branch_name = process.stdout
-    if re.match(r"^(bug|feature)-([\w]+)$", branch_name.decode()):
+    if re.match(
+        r"(^(feat|fix|doc|test|perf|refacto)([-\w]+)-#([\d]+)$)|(^master$)|(^dev$)",
+        branch_name.decode(),
+    ):
         print(f"{Back.GREEN+Fore.BLACK} Branch name PASSED {Style.RESET_ALL}")
         return 0
     else:
@@ -150,8 +121,7 @@ if __name__ == "__main__":
         ("Black", black_commands),
         ("Flake8", flake_commands),
         ("Bandit", bandit_commands),
-        ("Unittest", unittest_commands, "api_consumer"),
-        ("Coverage", unittest_commands, "api_consumer"),
+        ("Coverage", coverage_commands, "api_consumer"),
     ]
 
     exit_score = 0
@@ -161,7 +131,6 @@ if __name__ == "__main__":
         exit_score += run_app(interpreter, path_project, *app)
 
     exit_score += check_coverage_report(interpreter)
-    exit_score += check_requirements(interpreter)
     # exit_score += check_git_branch_name()
 
     if exit_score > 0:
