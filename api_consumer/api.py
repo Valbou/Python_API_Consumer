@@ -44,8 +44,6 @@ class Api:
         self._prev = ""
         self._next = ""
 
-    # TODO: change to permit to add more requests to executor
-    # with a pending status of queries flushed on demand
     async def async_req(self, funct, **kargs):
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, partial(funct, **kargs))
@@ -77,7 +75,6 @@ class Api:
         else:
             datas = r.json()
             if isinstance(datas, dict):
-                # TODO: permit to overload names
                 self._prev = datas.get("previous", "")
                 self._next = datas.get("next", "")
                 return datas.get("results", [])
@@ -207,7 +204,6 @@ class Api:
         """To construct URL"""
         options = options or []
 
-        # TODO: permit to add an URL formatter object to get more flexibility
         return f"{self._url}/{item}/{id_instance}?format={self._output}{self._options(options)}"
 
     def _options(self, options: list) -> str:

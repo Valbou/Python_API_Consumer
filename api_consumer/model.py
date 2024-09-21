@@ -20,8 +20,6 @@ class Model(Api):
         return super().__new__(cls)
 
     def __init__(self, url: str, item: str = "", verbose: bool = False):
-        # TODO: add config to permit auto composition from attribute name
-        # ex: object_id add a object attribute that contain an Object(Model) instance
         self.config(url, verbose=verbose)
 
     def _is_public_attribute(self, member: Tuple[str, any]) -> bool:
@@ -171,7 +169,6 @@ class Model(Api):
 
     def is_up_to_date(self, data: dict):
         """Control data is up to date"""
-        # TODO: Manage lists and lists of id / instances (M2M & O2M)
         for k, _ in data.items():
             if getattr(self, k) != data[k] or (
                 self._is_object((0, getattr(self, k)))
