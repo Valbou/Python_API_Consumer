@@ -8,7 +8,7 @@ REST API Consumer
 [![CodeFactor](https://www.codefactor.io/repository/github/valbou/python_api_consumer/badge)](https://www.codefactor.io/repository/github/valbou/python_api_consumer)
 
 This API consumer was originally created to easily consume a Django REST Framework API from a PyQT application on a Raspberry Pi.
-This, with the goal to achieve this in a similar way to Django ORM use.
+This, with the goal to achieve this in a similar way that Django ORM use.
 
 __With Python_API_Consumer, you can consume easily numerous API from any provider, in a easier way than a query a database.__
 Nothing to learn, nothing to configure, you can just use it as shown below.
@@ -61,7 +61,7 @@ many_foo = foo.from_query(
   limit=limit,
   model_class=Foo
   )
-# The use of limit=limit parameter is used to add instances beyond the DRF page_size configuration.
+# limit=limit parameter is used to add instances beyond the DRF page_size configuration.
 # model_class=Foo is optional because foo is an instance of Foo
 # many_foo is a list of 10 instances of Foo class
 ```
